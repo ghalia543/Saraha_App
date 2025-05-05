@@ -1,6 +1,6 @@
-#include "LoginSystem.h"
+
 #include "UserManager.h"
-#include "Registeration.h"
+
 #include "System.h"
 
 #include <iostream>
