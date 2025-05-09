@@ -6,7 +6,7 @@
 #include <queue>
 #include <vector>
 #include <string>
-//#include "Message.h"
+#include "Message.h"
 //#include "Chat.h"
 
 using namespace std;
@@ -19,8 +19,8 @@ private:
     string password;
     //string mobileNumber;
     vector<string> contacts;
-    //stack<Message> sentMessages;
-    //queue<Message> recievedMessages;
+    stack<Message> sentMessages;
+    vector<Message> recievedMessages;
     //queue<Message> favoriteMessages;
     //unordered_map<string, Chat> chats;
 
@@ -41,8 +41,9 @@ public:
     string getpassword();
     vector<string> getContacts();
 
-    /*queue<Message> getReceivedMessages();
+    vector<Message> getReceivedMessages();
     stack<Message> getSentMessages();
+/*
     queue<Message> getFavoriteMessages();
     unordered_map<string, Chat> getchats();
 
@@ -53,19 +54,28 @@ public:
 
     void showContacts();
 
-    void sendMessage(string toId, string msgContent, User receiver);
-
-    void receiveMessage(Message msg);
-
+    
     void viewChatWith(string otherId);
 
-    void viewSentMessages();
-
-    void undoLastMessage();
+   
 
     void favoriteLastMessage();
 
     void viewFavorites();
     */
+    void sendMessage(string toId, string msgContent, User receiver);
+
+    void receiveMessage(Message msg);
+
+    void viewSentMessages();
+
+    void undoLastMessage();
+
+    void view_all_recievedMessages();
+
+    void view_messages_from_contact(string senderID_contact);
+
+    void view_recieved_messagesMenu();
+
 };
 
