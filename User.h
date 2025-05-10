@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include "Message.h"
+#include "ContactList.h"
 //#include "Chat.h"
 
 using namespace std;
@@ -18,6 +19,7 @@ private:
     string username;
     string password;
     //string mobileNumber;
+    ContactList contactList; //secure contact
     vector<string> contacts;
     stack<Message> sentMessages;
     vector<Message> recievedMessages;
@@ -35,6 +37,11 @@ public:
     //void setSentMessage(string msgId);
     //void setFavoriteMessage(string msgId);
     //void setchat(string chatId);
+
+    // Contact Management 
+    void addContact(string contactId);
+    void showContacts();
+    vector<string> getContacts(); 
 
     string getId();
     string getUsername();
