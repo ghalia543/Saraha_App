@@ -46,7 +46,6 @@ public:
     string getId();
     string getUsername();
     string getpassword();
-    vector<string> getContacts();
 
     vector<Message> getReceivedMessages();
     stack<Message> getSentMessages();
