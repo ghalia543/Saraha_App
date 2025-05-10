@@ -111,6 +111,8 @@ void  User::sendMessage(string toId, string msgContent, User receiver) {
 void User::receiveMessage(Message msg) {
     //chats[msg.senderId].addMessage(msg);
     recievedMessages.push(msg);
+    contactList.addContact(msg.getSenderId());   //added to secure contact
+    contactList.updateContactOnMessage(msg.getSenderId());  //added to secure 
 }
 
 //Display all sent messages
@@ -199,6 +201,16 @@ void User::view_recieved_messagesMenu()
     
     } while (c != 'n' && c != 'no');
 
+}
+//contact management
+vector<string> User::getContacts() {
+    return contactList.getSortedContacts();
+}
+void User::addContact(string contactId) {
+    contactList.addContact(contactId);
+}
+void User::showContacts() {
+    cout << contactList.displayContacts();
 }
 
 /*
