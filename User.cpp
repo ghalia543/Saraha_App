@@ -29,7 +29,7 @@ void User::setReceivedMessage(string msgId) {
 }
 
 void User::setSentMessage(string& msgId) {
-    sentMessages.push(MessageManager::getMessage(msgId));
+    sentMessages.push_back(MessageManager::getMessage(msgId));
     
 }
 
@@ -62,14 +62,15 @@ vector<Message>& User::getReceivedMessages() {
     return receivedMessages;
 }
 
-stack<Message> User::getSentMessages() {////Nedd Modify as deque
-    stack<Message> reversedMesssages;
+deque<Message> User::getSentMessages() {////Nedd Modify as deque
+    /*stack<Message> reversedMesssages;
     while (!sentMessages.empty()) {
         Message tempMess = sentMessages.top();
         reversedMesssages.push(tempMess);
         sentMessages.pop();
     }
-    return reversedMesssages;
+    return reversedMesssages;*/
+    return sentMessages;
 }
 
 queue<Message> User::getFavoriteMessages() {
@@ -81,7 +82,7 @@ void  User::sendMessage(string toId, string msgContent, User& receiver) {
     Message msg(id, toId, msgContent);
     msg.setTime();
     MessageManager::addMessage(msg.getMessageId(), msg);
-    sentMessages.push(msg);
+    sentMessages.push_back(msg);
     receiver.receiveMessage(msg);
     cout << "Message sent.\n";
 }
@@ -95,9 +96,9 @@ void User::receiveMessage(Message msg) {
 
 //Display all sent messages
 void User::viewSentMessages() {
-    stack<Message> temp = sentMessages;
+    deque<Message> temp = sentMessages;
     while (!temp.empty()) {
-        Message msg = temp.top(); temp.pop();
+        Message msg = temp.back(); temp.pop_back();
         cout << "To User " << msg.getReceiverId() << ": " << msg.getContent() << "\n";
     }
 }
@@ -108,11 +109,11 @@ void User::undoLastMessage() {
         cout << "No message to undo.\n";
         return;
     }
-    Message tempMsg = sentMessages.top();
+    Message tempMsg = sentMessages.back();
     User receiver = UserManager::searchUser(tempMsg.getReceiverId());
     receiver.getReceivedMessages().pop_back();
     MessageManager::deleteMessage(tempMsg.getMessageId());
-    sentMessages.pop();
+    sentMessages.pop_back();
     cout << "Last message undone.\n";
 }
 
@@ -185,16 +186,6 @@ void User::view_recieved_messagesMenu()
 
     } while (c != 'n' && c != 'no');
 
-}
-//contact management
-vector<string> User::getContacts() {
-    return contactList.getSortedContacts();
-}
-void User::addContact(string contactId) {
-    contactList.addContact(contactId);
-}
-void User::showContacts() {
-    cout << contactList.displayContacts();
 }
 
 //contact management
