@@ -2,14 +2,13 @@
 #include <iostream>
 #include <unordered_map>
 #include <unordered_set>
-#include <stack>
+#include <deque>
 #include <queue>
 #include <vector>
 #include <string>
 #include "Message.h"
 #include "ContactList.h"
 #include "MessageManager.h"
-
 
 using namespace std;
 
@@ -22,7 +21,7 @@ private:
     string password;
     ContactList contactList;
     vector<Message> receivedMessages;
-    stack<Message> sentMessages;
+    deque<Message> sentMessages;
     queue<Message> favoriteMessages;
 
 public:
@@ -44,7 +43,7 @@ public:
     string getUsername();
     string getpassword();
     vector<Message>& getReceivedMessages();
-    stack<Message> getSentMessages();
+    deque<Message> getSentMessages();
     queue<Message> getFavoriteMessages();
     map<string, int> getContactList();
     vector<string> getSortedContacts();
