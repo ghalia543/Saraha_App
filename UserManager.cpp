@@ -111,7 +111,7 @@ bool UserManager::saveUsersToFile() {
 		User& user = it->second;
 		map<string, int> userContactList = user.getContactList();
 		vector<Message>& userReceivedMessages = user.getReceivedMessages();
-		stack<Message> userSentMessages = user.getSentMessages();
+		deque<Message> userSentMessages = user.getSentMessages();
 		queue<Message> userFavoriteMessages = user.getFavoriteMessages();
 		userOut << user.getId() << "\n"
 			<< username << "\n"
@@ -153,8 +153,8 @@ bool UserManager::saveUsersToFile() {
 			else {
 				userOut << "\n";
 			}
-			userOut << userSentMessages.top().getMessageId();
-			userSentMessages.pop();
+			userOut << userSentMessages.front().getMessageId();
+			userSentMessages.pop_front();
 			first = false;
 		}
 
