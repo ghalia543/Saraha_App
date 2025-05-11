@@ -186,6 +186,16 @@ void User::view_recieved_messagesMenu()
     } while (c != 'n' && c != 'no');
 
 }
+//contact management
+vector<string> User::getContacts() {
+    return contactList.getSortedContacts();
+}
+void User::addContact(string contactId) {
+    contactList.addContact(contactId);
+}
+void User::showContacts() {
+    cout << contactList.displayContacts();
+}
 
 //contact management
 void User::addContact(string contactId) {

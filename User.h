@@ -10,6 +10,7 @@
 #include "ContactList.h"
 #include "MessageManager.h"
 
+
 using namespace std;
 
 class User {
@@ -62,38 +63,3 @@ public:
     void addContact(string contactId);
     void showContacts();
 };
-/*U1
-Toaa Emad
-toaa#123
-2
-U2, 0, U7, 0
-
-U6
-ghalia
-helloghalia
-1
-U4, 1
-
-U2
-Farah Mohamed
-farah#456
-2
-U6, 0, U4, 0
-
-U3
-
-U8
-adam
-helloadam
-2
-U7, 1, U3, 0
-
-U5
-Salwa Hamdy
-salwa#123
-4
-U1, 0, U2, 0, U3, 0, U6, 0
-
-U7
-habiba
-hellohabiba*/
