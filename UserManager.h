@@ -18,9 +18,9 @@ public:
 
 	bool loadUsersFromFile();
 	bool saveUsersToFile();
-	unordered_map <string, User> return_user() {
+	/*unordered_map <string, User> return_user() {
 		return users;
-	}
+	}*/
 	static void addUser(string uname, User& newUser);
 	static User& searchUser(string uname);
 };
