@@ -5,11 +5,9 @@
 
 class System
 {
-private:
-    UserManager& userManager;
 
 public:
-    System(UserManager& um);
+    System();
     bool registerUser(const string& uname, const string& pass);
     bool login(const string& username, const string& password);
 

@@ -8,80 +8,58 @@
 #include <string>
 #include "Message.h"
 #include "ContactList.h"
-//#include "Chat.h"
+#include "MessageManager.h"
+
 
 using namespace std;
 
 class User {
 private:
+
     static int autoId;
     string id;
     string username;
     string password;
-    //string mobileNumber;
-    ContactList contactList; //secure contact
-    vector<string> contacts;
+    ContactList contactList;
+    vector<Message> receivedMessages;
     stack<Message> sentMessages;
-    vector<Message> recievedMessages;
-    //queue<Message> favoriteMessages;
-    //unordered_map<string, Chat> chats;
+    queue<Message> favoriteMessages;
 
 public:
+
+    //Constructors
     User();
     User(string uname, string pwd);
     User(string id, string uname, string pwd);
 
+    //Setters
+    static void setautoId(int nextId);
+    void setContact(string& contactId, string& contactMsgCount);
+    void setReceivedMessage(string msgId);
+    void setSentMessage(string& msgId);
+    void setFavoriteMessage(string msgId);
 
-    void setautoId(int nextId);
-    //void setReceivedMessage(string msgId);
-    //void setSentMessage(string msgId);
-    //void setFavoriteMessage(string msgId);
-    //void setchat(string chatId);
-
-    // Contact Management 
-    void addContact(string contactId);
-    void showContacts();
-    vector<string> getContacts(); 
-
+    //Getters
     string getId();
     string getUsername();
     string getpassword();
-
-    vector<Message> getReceivedMessages();
+    vector<Message>& getReceivedMessages();
     stack<Message> getSentMessages();
-/*
     queue<Message> getFavoriteMessages();
-    unordered_map<string, Chat> getchats();
+    map<string, int> getContactList();
+    vector<string> getSortedContacts();
 
-
-    bool validatePassword(string pwd);
-
-    void addContact(string contactId);
-
-    void showContacts();
-
-    
-    void viewChatWith(string otherId);
-
-   
-
-    void favoriteLastMessage();
-
-    void viewFavorites();
-    */
-    void sendMessage(string toId, string msgContent, User receiver);
-
+    //Functions
+    void sendMessage(string toId, string msgContent, User& receiver);
     void receiveMessage(Message msg);
-
     void viewSentMessages();
-
     void undoLastMessage();
-
     void view_all_recievedMessages();
-
     void view_messages_from_contact(string senderID_contact);
-
     void view_recieved_messagesMenu();
-
+    void putFavorite(int msgPos);
+    void RemoveFavoriteMessage();
+    void viewFavorites();
+    void addContact(string contactId);
+    void showContacts();
 };
-
