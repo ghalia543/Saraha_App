@@ -1,27 +1,67 @@
 U4
 Hager Ahmed
 hager#123
+0
+0
+1
+M1
+0
 U1
 Toaa Emad
 toaa#123
+2
+U4,0,U7,0
+0
+0
+0
 U6
 ghalia
 helloghalia
+1
+U2,1
+2
+M1,M3
+0
+1
+M3
 U2
 Farah Mohamed
 farah#456
+2
+U4,0,U6,0
+0
+1
+M3
+0
 U3
 Maryam Mohamed
 Maryam#789
-U5
-Salwa Hamdy
-salwa#123
+0
+0
+0
+0
 U8
 adam
 helloadam
+0
+1
+M2
+0
+0
+U5
+Salwa Hamdy
+salwa#123
+4
+U1,0,U2,0,U6,0,U7,0
+0
+0
+0
 U7
 habiba
 hellohabiba
-U9
-hamed
-hellohamed
+1
+U8,0
+0
+1
+M2
+0

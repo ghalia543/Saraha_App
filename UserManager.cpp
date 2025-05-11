@@ -1,11 +1,11 @@
-#include "User.h"
 #include "UserManager.h"
-//#include "MessageManager.h"
-//#include "ChatManager.h"
+#include "User.h"
+#include "ContactList.h"
 #include <fstream>
+#include <sstream>
 
 unordered_map<string, User> UserManager::users;
-//unordered_set<string> UserManager::mobileNumbers;
+
 
 UserManager::UserManager() {}
 
@@ -19,52 +19,82 @@ bool UserManager::loadUsersFromFile() {
 	User user;
 	string id, uname, pwd;
 	int contactsCount, receivedMessagesCount,
-		sentMessagesCount, FavoriteMessagesCount, chatsCount;
+		sentMessagesCount, FavoriteMessagesCount;
 
-	while (getline(userIN, id) && getline(userIN, uname) && getline(userIN, pwd) ) {
+	while (getline(userIN, id) && getline(userIN, uname) && getline(userIN, pwd)) {
 
-		user = User(id, uname, pwd);
-		/*
+		User user(id, uname, pwd);
+
 		userIN >> contactsCount;
 		userIN.ignore();
-		for (int i = 0; i < contactsCount; i++) {
-			string contactId;
-			getline(userIN, contactId, ',');
-			user.addContact(contactId);
+		if (contactsCount > 0) {
+			string line;
+			getline(userIN, line);
+			stringstream stream(line);
+			for (int i = 0; i < contactsCount; i++) {
+				string contactId, contactMsgCount;
+				if (!getline(stream, contactId, ',')) {
+					cout << "Warning: Missing contact ID at index " << i << endl;
+					break;
+				}
+
+				if (!getline(stream, contactMsgCount, ',')) {
+					cout << "Warning: Missing contact message count for ID " << contactId << endl;
+					break;
+				}
+				user.setContact(contactId, contactMsgCount);
+			}
 		}
 
 		userIN >> receivedMessagesCount;
-		for (int i = 0; i < receivedMessagesCount; i++) {
-			string messageId;
-			getline(userIN, messageId, ',');
-			user.setReceivedMessage(messageId);
+		userIN.ignore();
+		if (receivedMessagesCount > 0) {
+			string line;
+			getline(userIN, line);
+			stringstream stream(line);
+			for (int i = 0; i < receivedMessagesCount; i++) {
+				string messId;
+				if (!getline(stream, messId, ',')) {
+					cout << "Warning: expected " << receivedMessagesCount << " message IDs, but found fewer.\n";
+					break;
+				}
+				user.setReceivedMessage(messId);
+			}
 		}
 
 		userIN >> sentMessagesCount;
-		for (int i = 0; i < sentMessagesCount; i++) {
-			string messageId;
-			getline(userIN, messageId, ',');
-			user.setSentMessage(messageId);
+		userIN.ignore();
+		if (sentMessagesCount > 0) {
+			string line;
+			getline(userIN, line);
+			stringstream stream(line);
+			for (int i = 0; i < sentMessagesCount; i++) {
+				string messId;
+				if (!getline(stream, messId, ',')) {
+					cout << "Warning: expected " << sentMessagesCount << " message IDs, but found fewer.\n";
+					break;
+				}
+				user.setSentMessage(messId);
+			}
 		}
-
 		userIN >> FavoriteMessagesCount;
-		for (int i = 0; i < FavoriteMessagesCount; i++) {
-			string messageId;
-			getline(userIN, messageId, ',');
-			user.setFavoriteMessage(messageId);
+		userIN.ignore();
+		if (FavoriteMessagesCount > 0) {
+			string line;
+			getline(userIN, line);
+			stringstream stream(line);
+			for (int i = 0; i < FavoriteMessagesCount; i++) {
+				string messId;
+				if (!getline(stream, messId, ',')) {
+					cerr << "Warning: expected " << FavoriteMessagesCount << " message IDs, but found fewer.\n";
+					break;
+				}
+				user.setFavoriteMessage(messId);
+			}
 		}
-
-		userIN >> chatsCount;
-		for (int i = 0; i < chatsCount; i++) {
-			string chatId;
-			getline(userIN, chatId, ',');
-			user.setchat(chatId);
-		}
-*/
-		users[user.getUsername()] = user;
-		//mobileNumbers.insert(mobileNum);
+		users.insert({ uname, user });
 	}
-	user.setautoId(users.size() + 1);
+	User::setautoId(users.size() + 1);
 	return true;
 }
 
@@ -79,79 +109,77 @@ bool UserManager::saveUsersToFile() {
 	for (it = users.begin(); it != users.end(); it++) {
 		string username = it->first;
 		User& user = it->second;
-		//vector<string> userContacts = user.getContacts();
-		//queue<Message> userReceivedMessages = user.getReceivedMessages();
-		//stack<Message> userSentMessages = user.getSentMessages();
-		//queue<Message> userFavoriteMessage = user.getFavoriteMessages();
-		//unordered_map<string, Chat> userchat = user.getchats();
+		map<string, int> userContactList = user.getContactList();
+		vector<Message>& userReceivedMessages = user.getReceivedMessages();
+		stack<Message> userSentMessages = user.getSentMessages();
+		queue<Message> userFavoriteMessages = user.getFavoriteMessages();
 		userOut << user.getId() << "\n"
 			<< username << "\n"
-			<< user.getpassword() << "\n";
-			//<< user.getMobileNumber() << "\n";
-		//<< userContacts.size() << "\n";
+			<< user.getpassword() << "\n"
+			<< user.getContactList().size()<< "\n";
 
-/*bool first = true;
-for (string uId : userContacts) {
-	if (!first) {
-		userOut << ',';
-	}
-	userOut << uId;
-	first = false;
-}
+		bool first = true;
+		if (!userContactList.empty()) {
+			map<string, int>::iterator contactIt;
+			for (contactIt = userContactList.begin(); contactIt != userContactList.end(); contactIt++) {
+				if (!first) {
+					userOut << ',';
+				}
+				userOut << contactIt->first << "," << contactIt->second;
+				first = false;
+			}
+			userOut << "\n";
+		}
+		
+		userOut << userReceivedMessages.size();
+		first = true;
+		for (int j = 0; j < userReceivedMessages.size(); j++) { 
+			if (!first) {
+				userOut << ',';
+			}
+			else {
+				userOut << "\n";
+			}
+			userOut << userReceivedMessages[j].getMessageId();
+			first = false;
+		}
 
-userOut << "\n" << userReceivedMessages.size() << "\n";
-first = true;
-while(!userReceivedMessages.empty()){
-	if (!first) {
-		userOut << ',';
-	}
-	userOut << userReceivedMessages.front().getMessageId();
-	userReceivedMessages.pop();
-	first = false;
-}
+		userOut << "\n" << userSentMessages.size();
+		first = true;
+		while (!userSentMessages.empty()) {
+			if (!first) {
+				userOut << ',';
+			}
+			else {
+				userOut << "\n";
+			}
+			userOut << userSentMessages.top().getMessageId();
+			userSentMessages.pop();
+			first = false;
+		}
 
-userOut << "\n" << userSentMessages.size() << "\n";
-first = true;
-while (!userSentMessages.empty()) {
-	if (!first) {
-		userOut << ',';
-	}
-	userOut << userSentMessages.top().getMessageId();
-	userSentMessages.pop();
-	first = false;
-}
-
-userOut << "\n" << userFavoriteMessage.size() << "\n";
-first = true;
-while (!userFavoriteMessage.empty()) {
-	if (!first) {
-		userOut << ',';
-	}
-	userOut << userFavoriteMessage.front().getMessageId();
-	userFavoriteMessage.pop();
-	first = false;
-}
-
-userOut << "\n" << userchat.size() << "\n";
-first = true;
-for (const auto& chatPair : userchat) {
-	string chatId = chatPair.first;
-	if (!first) {
-		userOut << ',';
-	}
-	userOut << chatId;
-	first = false;
-}
-userOut << "\n";
-*/
+		userOut << "\n" << userFavoriteMessages.size() ;
+		first = true;
+		while (!userFavoriteMessages.empty()) {
+			if (!first) {
+				userOut << ',';
+			}
+			else {
+				userOut << "\n";
+			}
+			userOut << userFavoriteMessages.front().getMessageId();
+			userFavoriteMessages.pop();
+			first = false;
+		}
+		userOut << "\n";
 	}
 	userOut.close();
 	return true;
 }
 
+//Used in user registeration
 void UserManager::addUser(string uname, User& newUser) {
-	users[uname] = newUser;
-	//mobileNumbers.insert(newUser.getMobileNumber());
+	users.insert({ uname, newUser });
 }
 
 User& UserManager::searchUser(string uname) {
@@ -162,13 +190,3 @@ User& UserManager::searchUser(string uname) {
 		throw runtime_error("User not found");
 	}
 }
-/*
-bool UserManager::searchMobileNumber(string mobileNumber) {
-	if (mobileNumbers.count(mobileNumber)) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-*/

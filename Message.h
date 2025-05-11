@@ -4,19 +4,28 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <string>
 #include <ctime>
+
 using namespace std;
+
 class Message {
 private:
+    static int autoId;
+    string messageId;
     string senderId;
     string receiverId;
     string content;
     bool isFavorite;
-    time_t sentTime;
+    string sentTime;
 
 public:
-    Message(string from, string to,  string text);
 
+    //Constructors
+    Message();
+    Message(string from, string to,  string text);
+    Message(string messID, string from, string to, string text);
+    
     // Getters
+    string getMessageId();
     string getSenderId() ;
     string getReceiverId() ;
     string getContent() ;
@@ -24,13 +33,17 @@ public:
     string getSentTime() ; // return formatted time string
 
     // Setters
+    void setautoId(int nextId);
+    void setMessageId(string id);
     void setSenderId(string id);
     void setReceiverId(string id);
     void setContent( string& text);
     void setIsFavorite(bool favorite);
+    void setTime();
+    void setTime(string time);
 
-    // Display method
-    void display() ;
+    // Functions
+    void displayMessage() ;
 };
 
 #endif // MESSAGE_H

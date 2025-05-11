@@ -5,17 +5,21 @@
 #include <map>
 #include <stdexcept>
 
+using namespace std;
+
 class ContactList {
 private:
-    std::set<std::string> contacts;
-    std::map<std::string, int> messageCount;
+    set<string> contacts;
+    map<string, int> messageCount;
 
 public:
     ContactList();
-    void addContact(const std::string& id);
-    void removeContact(const std::string& id);
-    bool searchContact(const std::string& id);
-    std:: vector <std::string> getSortedContacts() const;
-    std:: string displayContacts() const;
-    void updateContactOnMessage(const std::string& senderId);
+    void setContact(const string& contactId, string& contactMsgCount);
+    map<string, int> getContactList();
+    void addContact(const string& id);
+    void removeContact(const string& id);
+    bool searchContact(const string& id);
+    vector <string> getSortedContacts() const;
+    string displayContacts() const;
+    void updateContactOnMessage(const string& senderId);
 };

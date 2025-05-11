@@ -11,7 +11,6 @@ class UserManager
 private:
 	const string UserFilePath = "users.txt";
 	static unordered_map <string, User> users;
-	//static unordered_set<string> mobileNumbers;
 
 
 public:
@@ -19,8 +18,9 @@ public:
 
 	bool loadUsersFromFile();
 	bool saveUsersToFile();
-
-	void addUser(string uname, User& newUser);
-	User& searchUser(string uname);
-	//bool searchMobileNumber(string mobileNumber);
+	unordered_map <string, User> return_user() {
+		return users;
+	}
+	static void addUser(string uname, User& newUser);
+	static User& searchUser(string uname);
 };

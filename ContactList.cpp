@@ -1,14 +1,21 @@
 #include "ContactList.h"
 #include <iostream>
 #include<vector>
-#include <algorithm> // For std::sort
+#include <algorithm> 
 #include <stdexcept>
-#include <sstream>   // For string stream
+#include <sstream>  
 
 using namespace std;
 
-ContactList::ContactList() {
-    cout << "ContactList object created.\n";
+ContactList::ContactList() {}
+
+void ContactList::setContact(const string& contactId, string& contactMsgCount) {
+    contacts.insert(contactId);
+    messageCount[contactId] = stoi(contactMsgCount);
+}
+
+map<string, int> ContactList::getContactList() {
+    return messageCount;
 }
 
 void ContactList::addContact(const string& id) {
@@ -17,13 +24,13 @@ void ContactList::addContact(const string& id) {
         return;
     }
     if (messageCount.find(id) != messageCount.end()) {
-        cout << "Adding previous sender to contacts: " << id << endl;
+        cout << "Can't add user(" << id << ") into contacts." << endl;
     }
     else {
         messageCount[id] = 0;
+        contacts.insert(id);
         cout << "New contact added: " << id << endl;
     }
-    contacts.insert(id);
 }
 
 void ContactList::removeContact(const string& id) {
@@ -40,7 +47,7 @@ bool ContactList::searchContact(const string& id) {
     return found;
 }
 
- vector <string> ContactList::getSortedContacts() const {
+vector <string> ContactList::getSortedContacts() const {
     // First, create a vector of all contact IDs
     vector<string> sortedContacts;
     sortedContacts.reserve(contacts.size());
