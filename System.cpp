@@ -9,11 +9,11 @@
 
 using namespace std;
 
-System::System() {}
+System::System() {
+    current_LoggedIN_user = nullptr;  
+}
 
-bool System::registerUser(const string& uname, const string& pass)
-{
-    
+bool System::registerUser(const string& uname, const string& pass) {
     try {
         User& user = UserManager::searchUser(uname);
         cout << "Username already exists. Try another.\n";
@@ -27,11 +27,11 @@ bool System::registerUser(const string& uname, const string& pass)
     }
 }
 
-bool System::login(const string& username, const string& password)
-{
+bool System::login(const string& username, const string& password) {
     try {
         User& user = UserManager::searchUser(username);
-        if (user.getpassword() == password) {      
+        if (user.getpassword() == password) {
+            setCurrent_LoggedIN_user(user);  // Set the current logged-in user
             cout << "Login successful. Welcome, " << username << "!" << endl;
             return true;
         }
@@ -44,4 +44,15 @@ bool System::login(const string& username, const string& password)
         cout << "User does not exist. Try again." << endl;
         return false;
     }
+}
+
+User& System::getCurrent_LoggedIN_user() {
+    if (current_LoggedIN_user == nullptr) {
+        throw runtime_error("No user is currently logged in.");
+    }
+    return *current_LoggedIN_user;
+}
+
+void System::setCurrent_LoggedIN_user(User& user) {
+    current_LoggedIN_user = &user;
 }
