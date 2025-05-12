@@ -10,7 +10,7 @@
 using namespace std;
 
 System::System() {
-    current_LoggedIN_user = nullptr;  
+    current_LoggedIN_user = nullptr;
 }
 
 bool System::registerUser(const string& uname, const string& pass) {
@@ -55,4 +55,15 @@ User& System::getCurrent_LoggedIN_user() {
 
 void System::setCurrent_LoggedIN_user(User& user) {
     current_LoggedIN_user = &user;
+}
+
+void System::changeUserPassword(const string& userId, const string& newPassword) {
+    try {
+        User& user = UserManager::searchUser(userId);
+        user.setPassword(newPassword);
+        cout << "Password updated successfully for user: " << user.getUsername() << "\n";
+    }
+    catch (const exception& e) {
+        cout << "User not found. Cannot change password.\n";
+    }
 }
