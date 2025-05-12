@@ -62,4 +62,6 @@ public:
     void addContact(string contactId);
     void removeContact(string contactId);
     void showContacts();
+    void setPassword(const string& newPassword);  
+
 };
