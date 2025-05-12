@@ -18,7 +18,19 @@ map<string, int> ContactList::getContactList() {
     return messageCount;
 }
 
-void ContactList::addContact(const string& id) {
+void ContactList::addContact(const string& id, vector<Message> recievedMessages) {
+    bool found = false;
+    int numOfMessages = 0;
+    for (Message& msg: recievedMessages) {
+        if (msg.getSenderId() == id) {
+            found = true;
+            numOfMessages++;
+        }
+    }
+    if (!found) {
+        cout << "This ID didn't send a message before\n";
+        return;
+    }
     if (contacts.find(id) != contacts.end()) {
         cout << "Contact already exists: " << id << endl;
         return;
@@ -27,7 +39,7 @@ void ContactList::addContact(const string& id) {
         cout << "Can't add user(" << id << ") into contacts." << endl;
     }
     else {
-        messageCount[id] = 0;
+        messageCount[id] = numOfMessages;
         contacts.insert(id);
         cout << "New contact added: " << id << endl;
     }
@@ -38,6 +50,7 @@ void ContactList::removeContact(const string& id) {
         throw runtime_error("Contact not found: " + id);
     }
     contacts.erase(id);
+    messageCount.erase(id);
     cout << "Contact removed.\n";
 }
 
@@ -116,4 +129,11 @@ void ContactList::updateContactOnMessage(const string& senderId) {
     messageCount[senderId]++;
 }
 
+void ContactList::minusNumberOfMessages(const string& senderId)
+{
+    if (!searchContact(senderId)) {
+        throw invalid_argument("Cannot update message count for non-existent contact: " + senderId);
+    }
 
+    messageCount[senderId]--;
+}
