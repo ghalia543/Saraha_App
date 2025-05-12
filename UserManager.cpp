@@ -5,7 +5,7 @@
 #include <sstream>
 
 unordered_map<string, User> UserManager::users;
-
+unordered_map<string, string> UserManager::idToUsername;
 
 UserManager::UserManager() {}
 
@@ -92,7 +92,8 @@ bool UserManager::loadUsersFromFile() {
 				user.setFavoriteMessage(messId);
 			}
 		}
-		users.insert({ uname, user });
+		users[uname] = user;
+		idToUsername[user.getId()] = uname;
 	}
 	User::setautoId(users.size() + 1);
 	return true;
@@ -116,7 +117,7 @@ bool UserManager::saveUsersToFile() {
 		userOut << user.getId() << "\n"
 			<< username << "\n"
 			<< user.getpassword() << "\n"
-			<< user.getContactList().size()<< "\n";
+			<< user.getContactList().size() << "\n";
 
 		bool first = true;
 		if (!userContactList.empty()) {
@@ -130,10 +131,10 @@ bool UserManager::saveUsersToFile() {
 			}
 			userOut << "\n";
 		}
-		
+
 		userOut << userReceivedMessages.size();
 		first = true;
-		for (int j = 0; j < userReceivedMessages.size(); j++) { 
+		for (int j = 0; j < userReceivedMessages.size(); j++) {
 			if (!first) {
 				userOut << ',';
 			}
@@ -158,7 +159,7 @@ bool UserManager::saveUsersToFile() {
 			first = false;
 		}
 
-		userOut << "\n" << userFavoriteMessages.size() ;
+		userOut << "\n" << userFavoriteMessages.size();
 		first = true;
 		while (!userFavoriteMessages.empty()) {
 			if (!first) {
@@ -179,7 +180,8 @@ bool UserManager::saveUsersToFile() {
 
 //Used in user registeration
 void UserManager::addUser(string uname, User& newUser) {
-	users.insert({ uname, newUser });
+	users[uname] = newUser;
+	idToUsername[newUser.getId()] = uname;
 }
 
 User& UserManager::searchUser(string uname) {
@@ -188,5 +190,16 @@ User& UserManager::searchUser(string uname) {
 	}
 	else {
 		throw runtime_error("User not found");
+	}
+}
+
+User& UserManager::searchUserById(string uid)
+{
+	if (idToUsername.count(uid)) {
+		string uname = idToUsername.at(uid);
+		return users.at(uname);
+	}
+	else {
+		throw runtime_error("User ID not found");
 	}
 }
