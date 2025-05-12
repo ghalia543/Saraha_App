@@ -6,6 +6,210 @@
 
 using namespace std;
 
+
+void startUserMenu(UserManager& userManager, System& system) {
+    User& loggedInUser = system.getCurrent_LoggedIN_user();
+    bool logedIn = true;
+
+    while (logedIn) {
+        cout << "===================================================\n";
+        cout << "Press 1 to show contacts\n";
+        cout << "Press 2 to show sent messages\n";
+        cout << "Press 3 to send a message\n";
+        cout << "Press 4 to show received messages\n";
+        cout << "Press 5 to show received messages from a specific contact\n";
+        cout << "Press 6 to add a user to your contacts\n";
+        cout << "Press 7 to show favorite messages\n";
+        cout << "Press 8 to change password\n";
+        cout << "Press 9 to search messages by keyword\n";
+        cout << "Press 10 to view stats\n";
+        cout << "Press 11 to log out\n";
+
+        int c;
+        cin >> c;
+
+        switch (c) {
+        case 1: {
+            loggedInUser.showContacts();
+            if (loggedInUser.getContactList().empty()) {
+                cout << "You don't have any contacts.\n";
+                break;
+            }
+
+            cout << "Do you want to remove a contact?(Y/N)\n";
+            char answer;
+            cin >> answer;
+            if (answer == 'Y' || answer == 'y') {
+                string id;
+                cout << "Enter the user id: ";
+                cin >> id;
+                loggedInUser.removeContact(id);
+            }
+            break;
+        }
+
+        case 2: {
+            if (loggedInUser.getSentMessages().empty()) {
+                cout << "You don't have any sent messages.\n";
+                break;
+            }
+
+            loggedInUser.viewSentMessages();
+
+            cout << "Do you want to undo last sent message?(Y/N)\n";
+            char answer1;
+            cin >> answer1;
+            if (answer1 == 'Y' || answer1 == 'y') {
+                loggedInUser.undoLastMessage();
+            }
+            break;
+        }
+
+        case 3: {
+            string receiverName, content;
+            cout << "Enter the receiver name: ";
+            cin.ignore();
+            getline(cin, receiverName);
+            cout << "Enter the message content: ";
+            getline(cin, content);
+
+            try {
+                loggedInUser.sendMessage(content, userManager.searchUser(receiverName));
+            }
+            catch (const exception& e) {
+                cerr << "Error: " << e.what() << endl;
+            }
+            break;
+        }
+
+        case 4: {
+            loggedInUser.view_all_recievedMessages();
+
+            if (loggedInUser.getReceivedMessages().empty()) {
+                break;
+            }
+
+            cout << "Do you want to add a message to favorites (Y/N): ";
+            char choice2;
+            cin >> choice2;
+            if (choice2 == 'Y' || choice2 == 'y') {
+                int num;
+                cout << "Enter the number of message (starting from 1): ";
+                cin >> num;
+
+                if (num <= 0 || num > loggedInUser.getReceivedMessages().size()) {
+                    cout << "Invalid message number.\n";
+                }
+                else {
+                    loggedInUser.putFavorite(num - 1);
+                }
+            }
+            break;
+        }
+
+        case 5: {
+            string uid;
+            cout << "Enter the contact ID: ";
+            cin >> uid;
+            loggedInUser.view_messages_from_contact(uid);
+            break;
+        }
+
+        case 6: {
+            string uid;
+            cout << "Enter the user id: ";
+            cin >> uid;
+            loggedInUser.addContact(uid);
+            break;
+        }
+
+        case 7: {
+            loggedInUser.viewFavorites();
+            break;
+        }
+
+        case 8: {  
+            string oldPass, newPass;
+            cout << "Enter current password: ";
+            cin.ignore();
+            getline(cin, oldPass);
+
+            if (oldPass != loggedInUser.getpassword()) {
+                cout << "Incorrect password!\n";
+                break;
+            }
+
+            cout << "Enter new password: ";
+            getline(cin, newPass);
+
+            if (newPass.empty()) {
+                cout << "Password cannot be empty!\n";
+            }
+            else {
+                // Normally setter needed, but since password is private, assume System can handle it.
+                system.changeUserPassword(loggedInUser.getId(), newPass);
+                cout << "Password changed successfully!\n";
+            }
+            break;
+        }
+
+        case 9: {  
+            string keyword;
+            cout << "Enter keyword to search in received messages: ";
+            cin.ignore();
+            getline(cin, keyword);
+
+            bool found = false;
+            auto& msgs = loggedInUser.getReceivedMessages();
+            for (size_t i = 0; i < msgs.size(); ++i) {
+                if (msgs[i].getContent().find(keyword) != string::npos) {
+                    cout << "Message [" << i + 1 << "] from " << msgs[i].getSenderId() << ": "
+                        << msgs[i].getContent() << endl;
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                cout << "No messages found containing \"" << keyword << "\".\n";
+            }
+            break;
+        }
+
+        case 10: {  
+            cout << "=========== Stats ===========" << endl;
+            cout << "Total Contacts: " << loggedInUser.getContactList().size() << endl;
+            cout << "Total Sent Messages: " << loggedInUser.getSentMessages().size() << endl;
+            cout << "Total Received Messages: " << loggedInUser.getReceivedMessages().size() << endl;
+
+            queue<Message> favs = loggedInUser.getFavoriteMessages();
+            cout << "Total Favorite Messages: " << favs.size() << endl;
+
+            if (!loggedInUser.getContactList().empty()) {
+                vector<string> sortedContacts = loggedInUser.getSortedContacts();
+                cout << "Most Frequent Contact: " << sortedContacts[0] << endl;
+            }
+            cout << "=============================\n";
+            break;
+        }
+
+        case 11: {
+            cout << "Are you sure you want to logout? (Y/N): ";
+            char confirm;
+            cin >> confirm;
+            if (confirm == 'Y' || confirm == 'y') {
+                logedIn = false;
+            }
+            break;
+        }
+
+        default:
+            cout << "Invalid choice.\n";
+            break;
+        }
+    }
+}
+
+
 int main() {
     MessageManager messageManager;
     UserManager userManager;
@@ -15,152 +219,75 @@ int main() {
         return 1;
     }
 
-    if (userManager.loadUsersFromFile()) {
+    if (!userManager.loadUsersFromFile()) {
+        cout << "Failed to load users from file!\n";
+        return 1;
+    }
 
-        System system;
-        cout << "=========================Saraha=========================\n\n";
-        cout << "Press 1 for login and 2 for registeration: ";
-        int choice;
-        cin >> choice;
-        bool isValid;
-        string username, password;
-        if (choice == 1) {
-            cin.ignore();
-            cout << "\n                  ===Login System===" << endl;
-            do {
-                cout << "Enter username: ";
-                getline(cin, username);
+    System system;
+    cout << "========================= Saraha =========================\n\n";
+    cout << "Press 1 for login and 2 for registration: ";
+    int choice;
+    cin >> choice;
 
-                cout << "Enter password: ";
-                getline(cin, password);
+    bool isValid;
+    string username, password;
 
-                isValid = system.login(username, password);
-            } while (!isValid);
-            system.setCurrent_LoggedIN_user(userManager.searchUser(username));
-            User& loggedInUser = system.getCurrent_LoggedIN_user();
-            map<string, int> contacts = loggedInUser.getContactList();
-            bool logedIn = true;
-            while (logedIn) {
-                cout << "===================================================\n";
-                cout << "Press 1 to show contacts\n";//show option remove contact inside it
-                cout << "Press 2 to show sent messages\n";//show option undo last message inside
-                cout << "Press 3 to send a message\n";
-                cout << "Press 4 to show recieved messages\n";//show add to favorite messages
-                cout << "Press 5 to show recieved messages from a specific contact\n";
-                cout << "Press 6 to add a user to your contacts\n";
-                cout << "Press 7 to show favorite messages\n";//show remove oldest message
-                cout << "Press 8 to log out\n";
-                int c;
-                cin >> c;
-                switch (c)
-                {
-                case 1:
-                    loggedInUser.showContacts();
-                    cout << "Do you want to remove a contact?(Y/N)\n";
-                    char answer;
-                    cin >> answer;
-                    if (answer == 'Y' || answer == 'y') {
-                        string id;
-                        cout << "Enter the user id:";
-                        cin >> id;
-                        loggedInUser.removeContact(id);
-                    }
-                    break;
-                case 2:
-                    loggedInUser.viewSentMessages();
-                    
-                    cout << "Do you want to undo last sent message?(Y/N)\n";
-                    char answer1;
-                    cin >> answer1;
-                    if (answer1 == 'Y' || answer1 == 'y') {
-                        loggedInUser.undoLastMessage();
-                    }
-                    
-                    break;
-                case 3:
-                {
-                    string recievername, content;
-                    cout << "Enter the receiver name: ";
-                    cin.ignore(); 
-                    getline(cin, recievername);
+    if (choice == 1) {
+        cin.ignore();
+        cout << "\n                  === Login System ===\n";
+        do {
+            cout << "Enter username: ";
+            getline(cin, username);
+            cout << "Enter password: ";
+            getline(cin, password);
 
-                    cout << "Enter the message content: ";
-                    
-                    getline(cin, content); 
+            isValid = system.login(username, password);
+        } while (!isValid);
 
-                    try {
-                        loggedInUser.sendMessage(content, userManager.searchUser(recievername));
-                    }
-                    catch (const exception& e) {
-                        cerr << "Error: " << e.what() << endl;
-                    }
-                    break;
-                }
-                case 4:
-                    loggedInUser.view_all_recievedMessages();
-                    cout << "Do you want to add a message to favorites(Y/N)";
-                    char choice2;
-                    cin >> choice2;
-                    if (choice2 == 'Y' || choice2 == 'y') {
-                        int num;
-                        cout << "Enter the number of message :";
-                        cin >> num;
-                        loggedInUser.putFavorite(num - 1);
-                    }
-                    break;
-                case 5: {
-                    string uid;
-                    cout << "Enter the contact ID: ";
-                    cin >> uid;
-                    loggedInUser.view_messages_from_contact(uid);
-                    break;
-                }
-                case 6: {
-                    string uid;
-                    cout << "Enter the user id:";
-                    cin >> uid;
-                    loggedInUser.addContact(uid);
-                    break;
-                }
-                case 7:
-                    loggedInUser.viewFavorites();
-                    break;
-                case 8:
-                    logedIn = false;
-                    break;
-                default:
-                    break;
-                }
-            }
-            //loggedInUser.sendMessage("fromghalia", userManager.searchUser("Farah Mohamed"));
+        system.setCurrent_LoggedIN_user(userManager.searchUser(username));
+        startUserMenu(userManager, system);
+    }
+    else if (choice == 2) {
+        cin.ignore();
+        cout << "\n                === Registration System ===\n";
+        do {
+            cout << "Enter username: ";
+            getline(cin, username);
 
-        }
-        else {
-            cin.ignore();
-            cout << "\n                ===Registeration System===" << endl;
-            do {
-                cout << "Enter username: ";
-                getline(cin, username);
+            cout << "Enter password: ";
+            getline(cin, password);
 
-                cout << "Enter password: ";
-                getline(cin, password);
+            isValid = system.registerUser(username, password);
+        } while (!isValid);
 
-                isValid = system.registerUser(username, password);
-            } while (!isValid);
-        }
+        cout << "\nRegistration successful. Please login.\n";
 
+        do {
+            cout << "Enter username: ";
+            getline(cin, username);
+            cout << "Enter password: ";
+            getline(cin, password);
+
+            isValid = system.login(username, password);
+        } while (!isValid);
+
+        system.setCurrent_LoggedIN_user(userManager.searchUser(username));
+        startUserMenu(userManager, system);
     }
     else {
-        cout << "Failed to load users from file!" << endl;
+        cout << "Invalid choice!\n";
         return 1;
     }
 
+    // Save Data before Exit
     if (!userManager.saveUsersToFile()) {
-        cout << "Failed to load users into file!" << endl;
+        cout << "Failed to save users to file!\n";
         return 1;
     }
+
     if (!messageManager.saveMessagesToFile()) {
-        cout << "Failed to load messages into file!" << endl;
+        cout << "Failed to save messages to file!\n";
         return 1;
     }
 
