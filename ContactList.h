@@ -4,6 +4,7 @@
 #include <set>
 #include <map>
 #include <stdexcept>
+#include "Message.h"
 
 using namespace std;
 
@@ -16,10 +17,11 @@ public:
     ContactList();
     void setContact(const string& contactId, string& contactMsgCount);
     map<string, int> getContactList();
-    void addContact(const string& id);
+    void addContact(const string& id, vector<Message>);
     void removeContact(const string& id);
     bool searchContact(const string& id);
     vector <string> getSortedContacts() const;
     string displayContacts() const;
     void updateContactOnMessage(const string& senderId);
+    void minusNumberOfMessages(const string& senderId);
 };
