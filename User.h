@@ -49,7 +49,7 @@ public:
     vector<string> getSortedContacts();
 
     //Functions
-    void sendMessage(string toId, string msgContent, User& receiver);
+    void sendMessage(string msgContent, User& receiver);
     void receiveMessage(Message msg);
     void viewSentMessages();
     void undoLastMessage();
@@ -60,5 +60,6 @@ public:
     void RemoveFavoriteMessage();
     void viewFavorites();
     void addContact(string contactId);
+    void removeContact(string contactId);
     void showContacts();
 };
