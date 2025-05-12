@@ -11,7 +11,7 @@ class UserManager
 private:
 	const string UserFilePath = "users.txt";
 	static unordered_map <string, User> users;
-
+	static unordered_map<string, string> idToUsername;
 
 public:
 	UserManager();
@@ -23,4 +23,5 @@ public:
 	}*/
 	static void addUser(string uname, User& newUser);
 	static User& searchUser(string uname);
+	static User& searchUserById(string uid);
 };
