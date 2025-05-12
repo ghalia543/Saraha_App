@@ -10,10 +10,12 @@ int User::autoId = 1;
 User::User() {}
 
 User::User(string uname, string pwd)
-    : id("U" + to_string(autoId++)), username(uname), password(pwd) {}
+    : id("U" + to_string(autoId++)), username(uname), password(pwd) {
+}
 
 User::User(string id, string uname, string pwd)
-    : id(id), username(uname), password(pwd) {}
+    : id(id), username(uname), password(pwd) {
+}
 
 //setters
 void User::setautoId(int nextId) {
@@ -30,7 +32,6 @@ void User::setReceivedMessage(string msgId) {
 
 void User::setSentMessage(string& msgId) {
     sentMessages.push_back(MessageManager::getMessage(msgId));
-
 }
 
 void User::setFavoriteMessage(string msgId) {
@@ -38,47 +39,24 @@ void User::setFavoriteMessage(string msgId) {
 }
 
 //getters
-string User::getId() {
-    return id;
-}
+string User::getId() { return id; }
 
-string User::getUsername() {
-    return username;
-}
+string User::getUsername() { return username; }
 
-string User::getpassword() {
-    return password;
-}
+string User::getpassword() { return password; }
 
-map<string, int> User::getContactList() {
-    return contactList.getContactList();
-}
+map<string, int> User::getContactList() { return contactList.getContactList(); }
 
-vector<string> User::getSortedContacts() {
-    return contactList.getSortedContacts();
-}
+vector<string> User::getSortedContacts() { return contactList.getSortedContacts(); }
 
-vector<Message>& User::getReceivedMessages() {
-    return receivedMessages;
-}
+vector<Message>& User::getReceivedMessages() { return receivedMessages; }
 
-deque<Message> User::getSentMessages() {////Nedd Modify as deque
-    /*stack<Message> reversedMesssages;
-    while (!sentMessages.empty()) {
-        Message tempMess = sentMessages.top();
-        reversedMesssages.push(tempMess);
-        sentMessages.pop();
-    }
-    return reversedMesssages;*/
-    return sentMessages;
-}
+deque<Message> User::getSentMessages() { return sentMessages; }
 
-queue<Message> User::getFavoriteMessages() {
-    return favoriteMessages;
-}
+queue<Message> User::getFavoriteMessages() { return favoriteMessages; }
 
 //Send a message
-void  User::sendMessage(string msgContent, User& receiver) {
+void User::sendMessage(string msgContent, User& receiver) {
     Message msg(id, receiver.getId(), msgContent);
     msg.setTime();
     MessageManager::addMessage(msg.getMessageId(), msg);
@@ -94,8 +72,6 @@ void User::receiveMessage(Message msg) {
     if (contacts.find(msg.getSenderId()) != contacts.end()) {
         contactList.updateContactOnMessage(msg.getSenderId());
     }
-   // contactList.addContact(msg.getSenderId());   //added to secure contact
-   // contactList.updateContactOnMessage(msg.getSenderId());  //added to secure 
 }
 
 //Display all sent messages
@@ -136,7 +112,7 @@ void User::undoLastMessage() {
         if (receiver.contactList.searchContact(id)) {
             receiver.contactList.minusNumberOfMessages(id);
         }
-        
+
         cout << "Last message undone.\n";
 
     }
@@ -146,13 +122,9 @@ void User::undoLastMessage() {
 }
 
 //view all recieved messages
-
-void User::view_all_recievedMessages()
-{
-    if (!receivedMessages.empty())
-    {
-        for (auto it = receivedMessages.end() - 1; ; it--)
-        {
+void User::view_all_recievedMessages() {
+    if (!receivedMessages.empty()) {
+        for (auto it = receivedMessages.end() - 1;; it--) {
             it->displayMessage();
             if (it == receivedMessages.begin())
                 break;
@@ -161,14 +133,12 @@ void User::view_all_recievedMessages()
 }
 
 //view all recieved messages from specific contact
-void User::view_messages_from_contact(string senderID_contact)
-{
-    
+void User::view_messages_from_contact(string senderID_contact) {
     if (!contactList.searchContact(senderID_contact)) {
         cout << "This is is not a contact\n";
         return;
     }
-    
+
     bool found = false;
     for (Message& msg : receivedMessages) {
         if (msg.getSenderId() == senderID_contact) {
@@ -184,76 +154,80 @@ void User::view_messages_from_contact(string senderID_contact)
 }
 
 //must be in main
-void User::view_recieved_messagesMenu()
-{
+void User::view_recieved_messagesMenu() {
     int choice;
     char c;
     do {
-        cout << "        * Recieving Messages *    \n";
-        cout << "press 1 : to view all your recieved messages \n";
-        cout << "press 2 : to view  recieved messages from a specific contact \n";
+        cout << "        * Receiving Messages *    \n";
+        cout << "press 1 : to view all your received messages \n";
+        cout << "press 2 : to view received messages from a specific contact \n";
         cout << "press 3 : to exit\n";
         cin >> choice;
         string contactID;
-        switch (choice)
-        {
+        switch (choice) {
         case 1:
-        {
             view_all_recievedMessages();
-        }
-        break;
+            break;
         case 2:
-
-            cout << "Enter the contact id:";
+            cout << "Enter the contact id: ";
+            cin >> contactID;
             view_messages_from_contact(contactID);
             break;
-
         case 3:
             return;
-
-
         default:
             break;
         }
         cout << "Continue? y: yes , n: no\n";
         cin >> c;
-
-    } while (c != 'n' && c != 'no');
-
+    } while (c != 'n' && c != 'N');
 }
 
 //contact management
 void User::addContact(string contactId) {
     contactList.addContact(contactId, receivedMessages);
 }
-void User::removeContact(string contactId)
-{
+
+void User::removeContact(string contactId) {
     contactList.removeContact(contactId);
 }
+
 void User::showContacts() {
     cout << contactList.displayContacts();
 }
 
-//Add message to favorites
+//Add message to favorites (Fixed)
 void User::putFavorite(int msgPos) {
-    if (receivedMessages.empty())
-    {
+    if (receivedMessages.empty()) {
         cout << "No message to favorite.\n";
         return;
     }
-    Message fav = receivedMessages.at(receivedMessages.size() - msgPos);
+
+    if (msgPos < 0 || msgPos >= receivedMessages.size()) {
+        cout << "Invalid message number.\n";
+        return;
+    }
+
+    int reverseIndex = receivedMessages.size() - 1 - msgPos;
+
+    Message& fav = receivedMessages.at(reverseIndex);
+
     if (!fav.getIsFavorite()) {
         fav.setIsFavorite(true);
         favoriteMessages.push(fav);
         cout << "Message added to favorites.\n";
     }
     else {
-        cout << "This message is already in favorite.\n";
+        cout << "This message is already in favorites.\n";
     }
 }
 
 //Remove a message from favorites
 void User::RemoveFavoriteMessage() {
+    if (favoriteMessages.empty()) {
+        cout << "No favorite messages to remove.\n";
+        return;
+    }
     favoriteMessages.pop();
     cout << "Oldest message removed from favorites.\n";
 }
@@ -265,4 +239,7 @@ void User::viewFavorites() {
         Message msg = temp.front(); temp.pop();
         cout << msg.getReceiverId() << ": " << msg.getContent() << "\n";
     }
+}
+void User::setPassword(const string& newPassword) {
+    password = newPassword;
 }
