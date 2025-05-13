@@ -12,7 +12,7 @@ private:
     static int autoId;
     string messageId;
     string senderId;
-    string receiverId;
+    string receiverUsername;
     string content;
     bool isFavorite;
     string sentTime;
@@ -27,7 +27,7 @@ public:
     // Getters
     string getMessageId();
     string getSenderId() ;
-    string getReceiverId() ;
+    string getReceiverUsername() ;
     string getContent() ;
     bool getIsFavorite() ;
     string getSentTime() ; // return formatted time string
@@ -36,7 +36,7 @@ public:
     void setautoId(int nextId);
     void setMessageId(string id);
     void setSenderId(string id);
-    void setReceiverId(string id);
+    void setReceiverUsername(string id);
     void setContent( string& text);
     void setIsFavorite(bool favorite);
     void setTime();
@@ -47,5 +47,3 @@ public:
 };
 
 #endif // MESSAGE_H
-
-
