@@ -32,17 +32,17 @@ bool UserManager::loadUsersFromFile() {
 			getline(userIN, line);
 			stringstream stream(line);
 			for (int i = 0; i < contactsCount; i++) {
-				string contactId, contactMsgCount;
-				if (!getline(stream, contactId, ',')) {
+				string contactUsername, contactMsgCount;
+				if (!getline(stream, contactUsername, ',')) {
 					cout << "Warning: Missing contact ID at index " << i << endl;
 					break;
 				}
 
 				if (!getline(stream, contactMsgCount, ',')) {
-					cout << "Warning: Missing contact message count for ID " << contactId << endl;
+					cout << "Warning: Missing contact message count for user " << contactUsername << endl;
 					break;
 				}
-				user.setContact(contactId, contactMsgCount);
+				user.setContact(contactUsername, contactMsgCount);
 			}
 		}
 
@@ -190,16 +190,5 @@ User& UserManager::searchUser(string uname) {
 	}
 	else {
 		throw runtime_error("User not found");
-	}
-}
-
-User& UserManager::searchUserById(string uid)
-{
-	if (idToUsername.count(uid)) {
-		string uname = idToUsername.at(uid);
-		return users.at(uname);
-	}
-	else {
-		throw runtime_error("User ID not found");
 	}
 }
