@@ -40,7 +40,7 @@ void startUserMenu(UserManager& userManager, System& system) {
             cin >> answer;
             if (answer == 'Y' || answer == 'y') {
                 string id;
-                cout << "Enter his username: ";
+                cout << "Enter user id: ";
                 cin >> id;
                 loggedInUser.removeContact(id);
             }
@@ -115,10 +115,10 @@ void startUserMenu(UserManager& userManager, System& system) {
         }
 
         case 6: {
-            string uname;
-            cout << "Enter his username: ";
-            cin >> uname;
-            loggedInUser.addContact(uname);
+            string uid;
+            cout << "Enter user id: ";
+            cin >> uid;
+            loggedInUser.addContact(uid);
             break;
         }
 
