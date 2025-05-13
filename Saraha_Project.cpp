@@ -6,24 +6,6 @@
 
 using namespace std;
 
-void askToFavorite(User& loggedInUser) {
-    cout << "Do you want to add a message to favorites (Y/N): ";
-    char choice2;
-    cin >> choice2;
-    if (choice2 == 'Y' || choice2 == 'y') {
-        int num;
-        cout << "Enter the number of message (starting from 1): ";
-        cin >> num;
-
-        if (num <= 0 || num > loggedInUser.getReceivedMessages().size()) {
-            cout << "Invalid message number.\n";
-        }
-        else {
-            loggedInUser.putFavorite(num);
-        }
-    }
-}
-
 void startUserMenu(UserManager& userManager, System& system) {
     User& loggedInUser = system.getCurrent_LoggedIN_user();
     bool logedIn = true;
@@ -106,16 +88,29 @@ void startUserMenu(UserManager& userManager, System& system) {
             }
 
             loggedInUser.view_all_recievedMessages();
-            askToFavorite(loggedInUser);
+            cout << "Do you want to add a message to favorites (Y/N): ";
+            char choice2;
+            cin >> choice2;
+            if (choice2 == 'Y' || choice2 == 'y') {
+                int num;
+                cout << "Enter the number of message (starting from 1): ";
+                cin >> num;
+
+                if (num <= 0 || num > loggedInUser.getReceivedMessages().size()) {
+                    cout << "Invalid message number.\n";
+                }
+                else {
+                    loggedInUser.putFavorite(num);
+                }
+            }
             break;
         }
 
         case 5: {
             string uid;
-            cout << "Enter the contact ID: ";
+            cout << "Enter the contact id: ";
             cin >> uid;
             loggedInUser.view_messages_from_contact(uid);
-            askToFavorite(loggedInUser);
             break;
         }
 
