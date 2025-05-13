@@ -5,7 +5,6 @@
 #include <sstream>
 
 unordered_map<string, User> UserManager::users;
-unordered_map<string, string> UserManager::idToUsername;
 
 UserManager::UserManager() {}
 
@@ -93,7 +92,6 @@ bool UserManager::loadUsersFromFile() {
 			}
 		}
 		users[uname] = user;
-		idToUsername[user.getId()] = uname;
 	}
 	User::setautoId(users.size() + 1);
 	return true;
@@ -181,7 +179,6 @@ bool UserManager::saveUsersToFile() {
 //Used in user registeration
 void UserManager::addUser(string uname, User& newUser) {
 	users[uname] = newUser;
-	idToUsername[newUser.getId()] = uname;
 }
 
 User& UserManager::searchUser(string uname) {
