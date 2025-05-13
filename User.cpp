@@ -22,8 +22,12 @@ void User::setautoId(int nextId) {
     autoId = nextId;
 }
 
-void User::setContact(string& contactId, string& contactMsgCount) {
-    contactList.setContact(contactId, contactMsgCount);
+void User::setPassword(const string& newPassword) {
+    password = newPassword;
+}
+
+void User::setContact(string& contactUsername, string& contactMsgCount) {
+    contactList.setContact(contactUsername, contactMsgCount);
 }
 
 void User::setReceivedMessage(string msgId) {
@@ -57,7 +61,7 @@ queue<Message> User::getFavoriteMessages() { return favoriteMessages; }
 
 //Send a message
 void User::sendMessage(string msgContent, User& receiver) {
-    Message msg(id, receiver.getId(), msgContent);
+    Message msg(id, receiver.getUsername(), msgContent);
     msg.setTime();
     MessageManager::addMessage(msg.getMessageId(), msg);
     sentMessages.push_back(msg);
@@ -77,9 +81,11 @@ void User::receiveMessage(Message msg) {
 //Display all sent messages
 void User::viewSentMessages() {
     deque<Message> temp = sentMessages;
+    cout << "\nSent messages:" << endl;
+    cout << "__________________\n";
     while (!temp.empty()) {
         Message msg = temp.back(); temp.pop_back();
-        cout << "To User " << msg.getReceiverId() << ": " << msg.getContent() << "\n";
+        cout << "To User " << msg.getReceiverUsername() << ": " << msg.getContent() << "\n";
     }
 }
 
@@ -90,8 +96,9 @@ void User::undoLastMessage() {
         return;
     }
     Message tempMsg = sentMessages.back();
+    sentMessages.pop_back();
     try {
-        User& receiver = UserManager::searchUserById(tempMsg.getReceiverId());
+        User& receiver = UserManager::searchUser(tempMsg.getReceiverUsername());
         vector<Message>& receiverMessages = receiver.getReceivedMessages();
 
         bool found = false;
@@ -108,7 +115,6 @@ void User::undoLastMessage() {
         }
 
         MessageManager::deleteMessage(tempMsg.getMessageId());
-        sentMessages.pop_back();
         if (receiver.contactList.searchContact(id)) {
             receiver.contactList.minusNumberOfMessages(id);
         }
@@ -123,8 +129,12 @@ void User::undoLastMessage() {
 
 //view all recieved messages
 void User::view_all_recievedMessages() {
+    int msgNum = 1;
     if (!receivedMessages.empty()) {
         for (auto it = receivedMessages.end() - 1;; it--) {
+            cout << "\nRecieved messages:" << endl;
+            cout << "__________________\n";
+            cout << msgNum++ << ". ";
             it->displayMessage();
             if (it == receivedMessages.begin())
                 break;
@@ -133,63 +143,40 @@ void User::view_all_recievedMessages() {
 }
 
 //view all recieved messages from specific contact
-void User::view_messages_from_contact(string senderID_contact) {
+void User::view_messages_from_contact(string senderID_contact)           {
     if (!contactList.searchContact(senderID_contact)) {
-        cout << "This is is not a contact\n";
+        cout << "This is not a contact\n";
         return;
     }
 
     bool found = false;
+    int msgNum = 1;
     for (Message& msg : receivedMessages) {
         if (msg.getSenderId() == senderID_contact) {
-            cout << "Recieved message from a contact" << endl;
-            cout << "________\n";
+            cout << "\nRecieved messages:" << endl;
+            cout << "__________________\n";
+            cout << msgNum++ << ". ";
             msg.displayMessage();
             found = true;
         }
     }
     if (!found) {
-        cout << "No messages from contact: " << senderID_contact << endl;
+        cout << "Empty!" << endl;
     }
 }
 
-//must be in main
-void User::view_recieved_messagesMenu() {
-    int choice;
-    char c;
-    do {
-        cout << "        * Receiving Messages *    \n";
-        cout << "press 1 : to view all your received messages \n";
-        cout << "press 2 : to view received messages from a specific contact \n";
-        cout << "press 3 : to exit\n";
-        cin >> choice;
-        string contactID;
-        switch (choice) {
-        case 1:
-            view_all_recievedMessages();
-            break;
-        case 2:
-            cout << "Enter the contact id: ";
-            cin >> contactID;
-            view_messages_from_contact(contactID);
-            break;
-        case 3:
-            return;
-        default:
-            break;
-        }
-        cout << "Continue? y: yes , n: no\n";
-        cin >> c;
-    } while (c != 'n' && c != 'N');
-}
-
 //contact management
-void User::addContact(string contactId) {
-    contactList.addContact(contactId, receivedMessages);
+void User::addContact(string contactUsername) {
+    contactList.addContact(contactUsername, receivedMessages);
 }
 
 void User::removeContact(string contactId) {
-    contactList.removeContact(contactId);
+    try {
+        contactList.removeContact(contactId);
+    }
+    catch (const exception& e) {
+        return;
+    }
 }
 
 void User::showContacts() {
@@ -198,17 +185,7 @@ void User::showContacts() {
 
 //Add message to favorites (Fixed)
 void User::putFavorite(int msgPos) {
-    if (receivedMessages.empty()) {
-        cout << "No message to favorite.\n";
-        return;
-    }
-
-    if (msgPos < 0 || msgPos >= receivedMessages.size()) {
-        cout << "Invalid message number.\n";
-        return;
-    }
-
-    int reverseIndex = receivedMessages.size() - 1 - msgPos;
+    int reverseIndex = receivedMessages.size()  - msgPos;
 
     Message& fav = receivedMessages.at(reverseIndex);
 
@@ -224,10 +201,6 @@ void User::putFavorite(int msgPos) {
 
 //Remove a message from favorites
 void User::RemoveFavoriteMessage() {
-    if (favoriteMessages.empty()) {
-        cout << "No favorite messages to remove.\n";
-        return;
-    }
     favoriteMessages.pop();
     cout << "Oldest message removed from favorites.\n";
 }
@@ -235,11 +208,11 @@ void User::RemoveFavoriteMessage() {
 //Display all favorite messages
 void User::viewFavorites() {
     queue<Message> temp = favoriteMessages;
+    cout << "\nFavorite messages:" << endl;
+    cout << "__________________\n";
     while (!temp.empty()) {
         Message msg = temp.front(); temp.pop();
-        cout << msg.getReceiverId() << ": " << msg.getContent() << "\n";
+        msg.displayMessage();
+        cout << "\n";
     }
-}
-void User::setPassword(const string& newPassword) {
-    password = newPassword;
 }
