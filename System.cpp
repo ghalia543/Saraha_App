@@ -1,7 +1,6 @@
 #include "System.h"
 #include "User.h"
 #include "UserManager.h"
-
 #include <iostream>
 #include <unordered_map>
 #include <string>
@@ -57,9 +56,9 @@ void System::setCurrent_LoggedIN_user(User& user) {
     current_LoggedIN_user = &user;
 }
 
-void System::changeUserPassword(const string& userId, const string& newPassword) {
+void System::changeUserPassword(const string& userUsername, const string& newPassword) {
     try {
-        User& user = UserManager::searchUser(userId);
+        User& user = UserManager::searchUser(userUsername);
         user.setPassword(newPassword);
         cout << "Password updated successfully for user: " << user.getUsername() << "\n";
     }
