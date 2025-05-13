@@ -26,8 +26,8 @@ void User::setPassword(const string& newPassword) {
     password = newPassword;
 }
 
-void User::setContact(string& contactUsername, string& contactMsgCount) {
-    contactList.setContact(contactUsername, contactMsgCount);
+void User::setContact(string& contactId, string& contactMsgCount) {
+    contactList.setContact(contactId, contactMsgCount);
 }
 
 void User::setReceivedMessage(string msgId) {
@@ -167,13 +167,13 @@ void User::view_messages_from_contact(string senderId_contact){
 }
 
 //contact management
-void User::addContact(string contactUsername) {
-    contactList.addContact(contactUsername, receivedMessages);
+void User::addContact(string contactId) {
+    contactList.addContact(contactId, receivedMessages);
 }
 
-void User::removeContact(string contactUsername) {
+void User::removeContact(string contactId) {
     try {
-        contactList.removeContact(contactUsername);
+        contactList.removeContact(contactId);
     }
     catch (const exception& e) {
         return;
