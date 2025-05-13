@@ -55,7 +55,7 @@ public:
     void viewSentMessages();
     void undoLastMessage();
     void view_all_recievedMessages();
-    void view_messages_from_contact(string senderUsername_contact);
+    void view_messages_from_contact(string senderId_contact);
     void view_recieved_messagesMenu();
     void putFavorite(int msgPos);
     void RemoveFavoriteMessage();
