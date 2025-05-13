@@ -143,16 +143,17 @@ void User::view_all_recievedMessages() {
 }
 
 //view all recieved messages from specific contact
-void User::view_messages_from_contact(string senderID_contact)           {
-    if (!contactList.searchContact(senderID_contact)) {
+void User::view_messages_from_contact(string senderId_contact)a           {
+    if (!contactList.searchContact(senderId_contact)) {
         cout << "This is not a contact\n";
         return;
     }
 
     bool found = false;
     int msgNum = 1;
+
     for (Message& msg : receivedMessages) {
-        if (msg.getSenderId() == senderID_contact) {
+        if (msg.getSenderId() == senderId_contact) {
             cout << "\nRecieved messages:" << endl;
             cout << "__________________\n";
             cout << msgNum++ << ". ";
@@ -170,9 +171,9 @@ void User::addContact(string contactUsername) {
     contactList.addContact(contactUsername, receivedMessages);
 }
 
-void User::removeContact(string contactId) {
+void User::removeContact(string contactUsername) {
     try {
-        contactList.removeContact(contactId);
+        contactList.removeContact(contactUsername);
     }
     catch (const exception& e) {
         return;
