@@ -1,4 +1,5 @@
 #include "ContactList.h"
+#include "UserManager.h"
 #include <iostream>
 #include<vector>
 #include <algorithm> 
@@ -9,54 +10,55 @@ using namespace std;
 
 ContactList::ContactList() {}
 
-void ContactList::setContact(const string& contactId, string& contactMsgCount) {
-    contacts.insert(contactId);
-    messageCount[contactId] = stoi(contactMsgCount);
+void ContactList::setContact(const string& contactUsername, string& contactMsgCount) {
+    contacts.insert(contactUsername);
+    messageCount[contactUsername] = stoi(contactMsgCount);
 }
 
 map<string, int> ContactList::getContactList() {
     return messageCount;
 }
 
-void ContactList::addContact(const string& id, vector<Message> recievedMessages) {
+void ContactList::addContact(const string& uname, vector<Message> recievedMessages) {
     bool found = false;
     int numOfMessages = 0;
-    for (Message& msg: recievedMessages) {
-        if (msg.getSenderId() == id) {
+    for (Message& msg : recievedMessages) {
+        string senderId = msg.getSenderId();
+        User& newUser = UserManager::searchUser(uname);
+        if (newUser.getId() == senderId) {
             found = true;
             numOfMessages++;
         }
     }
     if (!found) {
-        cout << "This ID didn't send a message before\n";
+        cout << "This user didn't send a message before\n";
         return;
     }
-    if (contacts.find(id) != contacts.end()) {
-        cout << "Contact already exists: " << id << endl;
+    if (contacts.find(uname) != contacts.end()) {
+        cout << "Contact already exists: " << uname << endl;
         return;
     }
-    if (messageCount.find(id) != messageCount.end()) {
-        cout << "Can't add user(" << id << ") into contacts." << endl;
+    if (messageCount.find(uname) != messageCount.end()) {
+        cout << "Can't add user(" << uname << ") into contacts." << endl;
     }
     else {
-        messageCount[id] = numOfMessages;
-        contacts.insert(id);
-        cout << "New contact added: " << id << endl;
+        messageCount[uname] = numOfMessages;
+        contacts.insert(uname);
+        cout << "New contact added: " << uname << endl;
     }
 }
 
-void ContactList::removeContact(const string& id) {
-    if (contacts.find(id) == contacts.end()) {
-        throw runtime_error("Contact not found: " + id);
+void ContactList::removeContact(const string& uname) {
+    if (contacts.find(uname) == contacts.end()) {
+        throw runtime_error("Contact not found: " + uname);
     }
-    contacts.erase(id);
-    messageCount.erase(id);
+    contacts.erase(uname);
+    messageCount.erase(uname);
     cout << "Contact removed.\n";
 }
 
-bool ContactList::searchContact(const string& id) {
-    bool found = contacts.find(id) != contacts.end();
-    cout << (found ? "Found: " : "Not found: ") << id << endl;
+bool ContactList::searchContact(const string& uname) {
+    bool found = contacts.find(uname) != contacts.end();
     return found;
 }
 
@@ -98,10 +100,7 @@ string ContactList::displayContacts() const {
     // Get contacts sorted by message count
     vector<string> sortedContacts = getSortedContacts();
 
-    if (sortedContacts.empty()) {
-        output << "No contacts in the list." << endl;
-    }
-    else {
+    if (!sortedContacts.empty()){
         output << "Contact List (sorted by message count):" << endl;
         output << "------------------------------------" << endl;
 
@@ -110,7 +109,7 @@ string ContactList::displayContacts() const {
             auto it = messageCount.find(contact);
             int count = (it != messageCount.end()) ? it->second : 0;
 
-            output << "ID: " << contact << " - Messages: " << count << endl;
+            output << "Username: " << contact << " - Messages: " << count << endl;
         }
     }
 
@@ -119,21 +118,21 @@ string ContactList::displayContacts() const {
 }
 
 // Update the message count when a contact sends a message
-void ContactList::updateContactOnMessage(const string& senderId) {
+void ContactList::updateContactOnMessage(const string& senderUsername) {
     // Check if the sender is in our contacts
-    if (!searchContact(senderId)) {
-        throw invalid_argument("Cannot update message count for non-existent contact: " + senderId);
+    if (!searchContact(senderUsername)) {
+        throw invalid_argument("Cannot update message count for non-existent contact: " + senderUsername);
     }
 
     // Increment message count
-    messageCount[senderId]++;
+    messageCount[senderUsername]++;
 }
 
-void ContactList::minusNumberOfMessages(const string& senderId)
+void ContactList::minusNumberOfMessages(const string& senderUsername)
 {
-    if (!searchContact(senderId)) {
-        throw invalid_argument("Cannot update message count for non-existent contact: " + senderId);
+    if (!searchContact(senderUsername)) {
+        throw invalid_argument("Cannot update message count for non-existent contact: " + senderUsername);
     }
 
-    messageCount[senderId]--;
+    messageCount[senderUsername]--;
 }
