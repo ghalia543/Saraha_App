@@ -11,19 +11,19 @@ int Message::autoId = 1;
 Message::Message() {}
 
 Message::Message(string from, string to, string text)
-    : messageId("M" + to_string(autoId++)), senderId(from), receiverId(to), content(text), isFavorite(false) {
+    : messageId("M" + to_string(autoId++)), senderId(from), receiverUsername(to), content(text), isFavorite(false) {
     sentTime = "";
 }
 
 Message::Message(string messID, string from, string to, string text)
-    : messageId(messID), senderId(from), receiverId(to), content(text), isFavorite(false) {
+    : messageId(messID), senderId(from), receiverUsername(to), content(text), isFavorite(false) {
     sentTime = "";
 }
 
 // Getters
 string Message::getMessageId() { return messageId; }
 string Message::getSenderId() { return senderId; }
-string Message::getReceiverId() { return receiverId; }
+string Message::getReceiverUsername() { return receiverUsername; }
 string Message::getContent() { return content; }
 bool Message::getIsFavorite() { return isFavorite; }
 
@@ -38,7 +38,7 @@ void Message::setautoId(int nextId) {
 }
 void Message::setMessageId(string id) { messageId = id; }
 void Message::setSenderId(string id) { senderId = id; }
-void Message::setReceiverId(string id) { receiverId = id; }
+void Message::setReceiverUsername(string uname) { receiverUsername = uname; }
 void Message::setContent(string& text) { content = text; }
 void Message::setIsFavorite(bool favorite) { isFavorite = favorite; }
 void Message::setTime() {
@@ -46,7 +46,7 @@ void Message::setTime() {
     tm* localTime = localtime(&now);
 
     char buffer[20];
-    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localTime);
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localTime);
     sentTime = buffer;
 }
 /*void Message::setTime() {
@@ -60,7 +60,7 @@ void Message::setTime(string time) { sentTime = time; }
 
 // Display method
 void Message::displayMessage() {
-    cout << "From: " << senderId << ", To: " << receiverId << "\n";
+    cout << "From: " << senderId << "\n";
     cout << "Message: " << content << "\n";
     cout << "Favorite: " << (isFavorite ? "Yes" : "No") << "\n";
     cout << "Sent at: " << getSentTime() << "\n";
