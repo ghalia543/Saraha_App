@@ -6,13 +6,30 @@
 
 using namespace std;
 
+void askToFavorite(User& loggedInUser) {
+    cout << "Do you want to add a message to favorites (Y/N): ";
+    char choice2;
+    cin >> choice2;
+    if (choice2 == 'Y' || choice2 == 'y') {
+        int num;
+        cout << "Enter the number of message (starting from 1): ";
+        cin >> num;
+
+        if (num <= 0 || num > loggedInUser.getReceivedMessages().size()) {
+            cout << "Invalid message number.\n";
+        }
+        else {
+            loggedInUser.putFavorite(num);
+        }
+    }
+}
 
 void startUserMenu(UserManager& userManager, System& system) {
     User& loggedInUser = system.getCurrent_LoggedIN_user();
     bool logedIn = true;
 
     while (logedIn) {
-        cout << "===================================================\n";
+        cout << "\n===================================================\n";
         cout << "Press 1 to show contacts\n";
         cout << "Press 2 to show sent messages\n";
         cout << "Press 3 to send a message\n";
@@ -23,7 +40,7 @@ void startUserMenu(UserManager& userManager, System& system) {
         cout << "Press 8 to change password\n";
         cout << "Press 9 to search messages by keyword\n";
         cout << "Press 10 to view stats\n";
-        cout << "Press 11 to log out\n";
+        cout << "Press 11 to log out\n\n";
 
         int c;
         cin >> c;
@@ -32,7 +49,7 @@ void startUserMenu(UserManager& userManager, System& system) {
         case 1: {
             loggedInUser.showContacts();
             if (loggedInUser.getContactList().empty()) {
-                cout << "You don't have any contacts.\n";
+                cout << "Empty!\n";
                 break;
             }
 
@@ -41,7 +58,7 @@ void startUserMenu(UserManager& userManager, System& system) {
             cin >> answer;
             if (answer == 'Y' || answer == 'y') {
                 string id;
-                cout << "Enter the user id: ";
+                cout << "Enter his username: ";
                 cin >> id;
                 loggedInUser.removeContact(id);
             }
@@ -50,7 +67,7 @@ void startUserMenu(UserManager& userManager, System& system) {
 
         case 2: {
             if (loggedInUser.getSentMessages().empty()) {
-                cout << "You don't have any sent messages.\n";
+                cout << "Empty!\n";
                 break;
             }
 
@@ -67,14 +84,14 @@ void startUserMenu(UserManager& userManager, System& system) {
 
         case 3: {
             string receiverName, content;
-            cout << "Enter the receiver name: ";
+            cout << "Enter the receiver username: ";
             cin.ignore();
             getline(cin, receiverName);
             cout << "Enter the message content: ";
             getline(cin, content);
 
             try {
-                loggedInUser.sendMessage(content, userManager.searchUser(receiverName));
+                loggedInUser.sendMessage(content, UserManager::searchUser(receiverName));
             }
             catch (const exception& e) {
                 cerr << "Error: " << e.what() << endl;
@@ -83,27 +100,13 @@ void startUserMenu(UserManager& userManager, System& system) {
         }
 
         case 4: {
-            loggedInUser.view_all_recievedMessages();
-
             if (loggedInUser.getReceivedMessages().empty()) {
+                cout << "Empty!\n";
                 break;
             }
 
-            cout << "Do you want to add a message to favorites (Y/N): ";
-            char choice2;
-            cin >> choice2;
-            if (choice2 == 'Y' || choice2 == 'y') {
-                int num;
-                cout << "Enter the number of message (starting from 1): ";
-                cin >> num;
-
-                if (num <= 0 || num > loggedInUser.getReceivedMessages().size()) {
-                    cout << "Invalid message number.\n";
-                }
-                else {
-                    loggedInUser.putFavorite(num - 1);
-                }
-            }
+            loggedInUser.view_all_recievedMessages();
+            askToFavorite(loggedInUser);
             break;
         }
 
@@ -112,23 +115,34 @@ void startUserMenu(UserManager& userManager, System& system) {
             cout << "Enter the contact ID: ";
             cin >> uid;
             loggedInUser.view_messages_from_contact(uid);
+            askToFavorite(loggedInUser);
             break;
         }
 
         case 6: {
-            string uid;
-            cout << "Enter the user id: ";
-            cin >> uid;
-            loggedInUser.addContact(uid);
+            string uname;
+            cout << "Enter his username: ";
+            cin >> uname;
+            loggedInUser.addContact(uname);
             break;
         }
 
         case 7: {
+            if (loggedInUser.getFavoriteMessages().empty()) {
+                cout << "Empty!\n";
+                break;
+            }
             loggedInUser.viewFavorites();
+            cout << "Do you want to remove oldest favorite message?(Y/N)\n";
+            char answer1;
+            cin >> answer1;
+            if (answer1 == 'Y' || answer1 == 'y') {
+                loggedInUser.RemoveFavoriteMessage();
+            }
             break;
         }
 
-        case 8: {  
+        case 8: {
             string oldPass, newPass;
             cout << "Enter current password: ";
             cin.ignore();
@@ -146,14 +160,13 @@ void startUserMenu(UserManager& userManager, System& system) {
                 cout << "Password cannot be empty!\n";
             }
             else {
-                // Normally setter needed, but since password is private, assume System can handle it.
-                system.changeUserPassword(loggedInUser.getId(), newPass);
+                system.changeUserPassword(loggedInUser.getUsername(), newPass);
                 cout << "Password changed successfully!\n";
             }
             break;
         }
 
-        case 9: {  
+        case 9: {
             string keyword;
             cout << "Enter keyword to search in received messages: ";
             cin.ignore();
@@ -175,14 +188,12 @@ void startUserMenu(UserManager& userManager, System& system) {
             break;
         }
 
-        case 10: {  
+        case 10: {
             cout << "=========== Stats ===========" << endl;
             cout << "Total Contacts: " << loggedInUser.getContactList().size() << endl;
             cout << "Total Sent Messages: " << loggedInUser.getSentMessages().size() << endl;
             cout << "Total Received Messages: " << loggedInUser.getReceivedMessages().size() << endl;
-
-            queue<Message> favs = loggedInUser.getFavoriteMessages();
-            cout << "Total Favorite Messages: " << favs.size() << endl;
+            cout << "Total Favorite Messages: " << loggedInUser.getFavoriteMessages().size() << endl;
 
             if (!loggedInUser.getContactList().empty()) {
                 vector<string> sortedContacts = loggedInUser.getSortedContacts();
@@ -208,7 +219,6 @@ void startUserMenu(UserManager& userManager, System& system) {
         }
     }
 }
-
 
 int main() {
     MessageManager messageManager;
@@ -245,7 +255,7 @@ int main() {
             isValid = system.login(username, password);
         } while (!isValid);
 
-        system.setCurrent_LoggedIN_user(userManager.searchUser(username));
+        system.setCurrent_LoggedIN_user(UserManager::searchUser(username));
         startUserMenu(userManager, system);
     }
     else if (choice == 2) {
@@ -272,7 +282,7 @@ int main() {
             isValid = system.login(username, password);
         } while (!isValid);
 
-        system.setCurrent_LoggedIN_user(userManager.searchUser(username));
+        system.setCurrent_LoggedIN_user(UserManager::searchUser(username));
         startUserMenu(userManager, system);
     }
     else {
