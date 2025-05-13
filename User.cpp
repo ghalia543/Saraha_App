@@ -143,7 +143,7 @@ void User::view_all_recievedMessages() {
 }
 
 //view all recieved messages from specific contact
-void User::view_messages_from_contact(string senderId_contact)a           {
+void User::view_messages_from_contact(string senderId_contact){
     if (!contactList.searchContact(senderId_contact)) {
         cout << "This is not a contact\n";
         return;
