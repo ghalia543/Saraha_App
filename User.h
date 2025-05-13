@@ -33,7 +33,8 @@ public:
 
     //Setters
     static void setautoId(int nextId);
-    void setContact(string& contactId, string& contactMsgCount);
+    void setPassword(const string& newPassword);
+    void setContact(string& contactUsername, string& contactMsgCount);
     void setReceivedMessage(string msgId);
     void setSentMessage(string& msgId);
     void setFavoriteMessage(string msgId);
@@ -54,14 +55,13 @@ public:
     void viewSentMessages();
     void undoLastMessage();
     void view_all_recievedMessages();
-    void view_messages_from_contact(string senderID_contact);
+    void view_messages_from_contact(string senderUsername_contact);
     void view_recieved_messagesMenu();
     void putFavorite(int msgPos);
     void RemoveFavoriteMessage();
     void viewFavorites();
-    void addContact(string contactId);
-    void removeContact(string contactId);
+    void addContact(string contactUsername);
+    void removeContact(string contactUsername);
     void showContacts();
-    void setPassword(const string& newPassword);  
 
 };
