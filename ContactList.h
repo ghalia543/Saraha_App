@@ -15,13 +15,13 @@ private:
 
 public:
     ContactList();
-    void setContact(const string& contactUsername, string& contactMsgCount);
+    void setContact(const string& contactId, string& contactMsgCount);
     map<string, int> getContactList();
-    void addContact(const string& uname, vector<Message>);
-    void removeContact(const string& uname);
-    bool searchContact(const string& uname);
+    void addContact(const string& uid, vector<Message>);
+    void removeContact(const string& uid);
+    bool searchContact(const string& uid);
     vector <string> getSortedContacts() const;
     string displayContacts() const;
-    void updateContactOnMessage(const string& senderUsername);
-    void minusNumberOfMessages(const string& senderUsername);
+    void updateContactOnMessage(const string& senderId);
+    void minusNumberOfMessages(const string& senderId);
 };
