@@ -56,12 +56,13 @@ public:
     void undoLastMessage();
     void view_all_recievedMessages();
     void view_messages_from_contact(string senderId_contact);
-    void view_recieved_messagesMenu();
+    //void view_recieved_messagesMenu();
     void putFavorite(int msgPos);
     void RemoveFavoriteMessage();
     void viewFavorites();
     void addContact(string contactId);
     void removeContact(string contactId);
     void showContacts();
+    bool searchContact(const string& uid);
 
 };
