@@ -25,7 +25,12 @@ void startUserMenu(UserManager& userManager, System& system) {
         cout << "Press 11 to log out\n\n";
 
         int c;
-        cin >> c;
+        cout << "Enter your choice: ";
+        while (!(cin >> c)) {
+            cin.clear(); // Clear error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+            cout << "Invalid input. Please enter a number between 1 and 11: ";
+        }
 
         switch (c) {
         case 1: {
@@ -260,13 +265,29 @@ int main() {
             cout << "Enter username: ";
             getline(cin, username);
 
-            cout << "Enter password: ";
-            getline(cin, password);
+            string confirmPassword;
+            do {
+                cout << "Enter password: ";
+                getline(cin, password);
+
+                cout << "Confirm password: ";
+                getline(cin, confirmPassword);
+
+                if (password != confirmPassword) {
+                    cout << "Passwords do not match! Please try again.\n";
+                }
+            } while (password != confirmPassword);
 
             isValid = system.registerUser(username, password);
+
+            if (!isValid) {
+                cout << "Username already exists. Please try again.\n";
+            }
+
         } while (!isValid);
 
-        cout << "\nRegistration successful. Please login.\n";
+        cout << "\nRegistration successful. A confirmation message has been sent to your email (simulation).\n";
+        cout << "Please login.\n";
 
         do {
             cout << "Enter username: ";
@@ -275,6 +296,10 @@ int main() {
             getline(cin, password);
 
             isValid = system.login(username, password);
+            if (!isValid) {
+                cout << "Invalid credentials. Please try again.\n";
+            }
+
         } while (!isValid);
 
         system.setCurrent_LoggedIN_user(UserManager::searchUser(username));
