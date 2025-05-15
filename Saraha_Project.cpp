@@ -22,7 +22,9 @@ void startUserMenu(UserManager& userManager, System& system) {
         cout << "Press 8 to change password\n";
         cout << "Press 9 to search messages by keyword\n";
         cout << "Press 10 to view stats\n";
-        cout << "Press 11 to log out\n\n";
+        cout << "Press 11 to search for a contact by ID\n";
+        cout << "Press 12 to log out\n\n";
+
 
         int c;
         cout << "Enter your choice: ";
@@ -204,6 +206,30 @@ void startUserMenu(UserManager& userManager, System& system) {
         }
 
         case 11: {
+            string contactId;
+            cout << "Enter contact ID to search: ";
+            cin >> contactId;
+
+            if (loggedInUser.searchContact(contactId)) {
+                cout << "Contact found: " << contactId << endl;
+
+                auto contactList = loggedInUser.getContactList();
+                auto it = contactList.find(contactId);
+                if (it != contactList.end()) {
+                    cout << "Number of messages received from " << contactId << ": " << it->second << endl;
+                }
+                else {
+                    cout << "No message count found for this contact.\n";
+                }
+            }
+            else {
+                cout << "Contact not found.\n";
+            }
+            break;
+        }
+
+
+        case 12: {
             cout << "Are you sure you want to logout? (Y/N): ";
             char confirm;
             cin >> confirm;
