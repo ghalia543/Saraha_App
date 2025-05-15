@@ -143,7 +143,7 @@ void User::view_all_recievedMessages() {
 }
 
 //view all recieved messages from specific contact
-void User::view_messages_from_contact(string senderId_contact){
+void User::view_messages_from_contact(string senderId_contact) {
     if (!contactList.searchContact(senderId_contact)) {
         cout << "This is not a contact\n";
         return;
@@ -184,9 +184,14 @@ void User::showContacts() {
     cout << contactList.displayContacts();
 }
 
+bool User::searchContact(const string& uid) {
+    return contactList.searchContact(uid);
+}
+
+
 //Add message to favorites (Fixed)
 void User::putFavorite(int msgPos) {
-    int reverseIndex = receivedMessages.size()  - msgPos;
+    int reverseIndex = receivedMessages.size() - msgPos;
 
     Message& fav = receivedMessages.at(reverseIndex);
 
