@@ -2,6 +2,7 @@
 #include "UserManager.h"
 #include <string>
 #include <unordered_map>
+#include <conio.h> 
 #include "User.h"
 
 class System {
@@ -14,4 +15,5 @@ public:
     User& getCurrent_LoggedIN_user();
     void setCurrent_LoggedIN_user(User& user);
     void changeUserPassword(const string& userId, const string& newPassword);
+    static string HidePassword();
 };
