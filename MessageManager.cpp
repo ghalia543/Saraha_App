@@ -6,11 +6,11 @@
 
 unordered_map <string, Message> MessageManager::messages;
 
-MessageManager ::MessageManager(){}
+MessageManager::MessageManager() {}
 
-bool MessageManager:: loadMessagesFromFile() {
+bool MessageManager::loadMessagesFromFile() {
 	ifstream messageIN(MessageFilePath);
-	
+
 	if (!messageIN) {
 		return false;
 	}
@@ -20,7 +20,7 @@ bool MessageManager:: loadMessagesFromFile() {
 
 	while (getline(messageIN, msgID) && getline(messageIN, senderID)
 		&& getline(messageIN, receiverID) && getline(messageIN, msgContent)) {
-		
+
 		message = Message(msgID, senderID, receiverID, msgContent);
 
 		bool favorite;
@@ -56,7 +56,7 @@ bool MessageManager::saveMessagesToFile() {
 		Message& msg = it->second;
 		messageOut << msgID << "\n"
 			<< msg.getSenderId() << "\n"
-			<< msg.getReceiverId() << "\n"
+			<< msg.getReceiverUsername() << "\n"
 			<< msg.getContent() << "\n"
 			<< msg.getIsFavorite() << "\n"
 			<< msg.getSentTime() << "\n";
@@ -64,7 +64,7 @@ bool MessageManager::saveMessagesToFile() {
 	messageOut.close();
 	return  true;
 }
-void MessageManager::addMessage(string mID, Message& newMessage){
+void MessageManager::addMessage(string mID, Message& newMessage) {
 	messages[mID] = newMessage;
 }
 
@@ -73,10 +73,9 @@ Message MessageManager::getMessage(string& mID) {
 		return messages.at(mID);
 	}
 	else {
-		return Message(); 
+		return Message();
 	}
 }
 void MessageManager::deleteMessage(string mID) {
 	messages.erase(mID);
 }
-
