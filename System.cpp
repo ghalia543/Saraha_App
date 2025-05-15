@@ -4,7 +4,8 @@
 #include <iostream>
 #include <unordered_map>
 #include <string>
-#include <cctype>               
+#include <cctype>           
+#include <conio.h> 
 
 using namespace std;
 
@@ -65,4 +66,28 @@ void System::changeUserPassword(const string& userUsername, const string& newPas
     catch (const exception& e) {
         cout << "User not found. Cannot change password.\n";
     }
+}
+
+
+
+string System::HidePassword() {
+
+    string password;
+    char ch;
+
+    while ((ch = _getch()) != '\r') { // return if (Enter key) pressed
+        if (ch == '\b') { // Backspace
+            if (!password.empty()) {
+                password.pop_back();             // Remove last character
+                cout << "\b \b";            // Erase * from screen
+            }
+        }
+        else {
+            password += ch;                      // Add typed character to password
+           cout << '*';                    // Show * instead of actual char
+        }
+    }
+
+    cout <<endl;
+    return password;
 }
