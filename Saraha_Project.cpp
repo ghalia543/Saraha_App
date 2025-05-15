@@ -148,7 +148,7 @@ void startUserMenu(UserManager& userManager, System& system) {
             string oldPass, newPass;
             cout << "Enter current password: ";
             cin.ignore();
-            getline(cin, oldPass);
+            oldPass= System::HidePassword();
 
             if (oldPass != loggedInUser.getpassword()) {
                 cout << "Incorrect password!\n";
@@ -156,7 +156,7 @@ void startUserMenu(UserManager& userManager, System& system) {
             }
 
             cout << "Enter new password: ";
-            getline(cin, newPass);
+            newPass= System::HidePassword();
 
             if (newPass.empty()) {
                 cout << "Password cannot be empty!\n";
@@ -276,7 +276,7 @@ int main() {
             cout << "Enter username: ";
             getline(cin, username);
             cout << "Enter password: ";
-            getline(cin, password);
+            password= System::HidePassword();
 
             isValid = system.login(username, password);
         } while (!isValid);
@@ -294,10 +294,10 @@ int main() {
             string confirmPassword;
             do {
                 cout << "Enter password: ";
-                getline(cin, password);
+                password= System::HidePassword();
 
                 cout << "Confirm password: ";
-                getline(cin, confirmPassword);
+                confirmPassword= System::HidePassword();
 
                 if (password != confirmPassword) {
                     cout << "Passwords do not match! Please try again.\n";
@@ -319,7 +319,7 @@ int main() {
             cout << "Enter username: ";
             getline(cin, username);
             cout << "Enter password: ";
-            getline(cin, password);
+            password = System::HidePassword();
 
             isValid = system.login(username, password);
             if (!isValid) {
