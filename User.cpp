@@ -140,6 +140,7 @@ void User::view_all_recievedMessages() {
                 break;
         }
     }
+    
 }
 
 //view all recieved messages from specific contact
@@ -166,6 +167,33 @@ void User::view_messages_from_contact(string senderId_contact) {
     }
 }
 
+// filter messages based on sentiment ( ex : only positive) 
+
+void User::filter_RecievedMessages_By_sentiment()
+{
+    int choice;
+    cout << "Enter the messages sentiment you'd like to see : \n0 ->positive\n1 -> negative\n2-> neutral\n";
+    cin >> choice;
+    if (choice != 0 && choice != 1 && choice != 2)
+    {
+        cout << "invalid input, please try again 😊";
+        return;
+    }
+
+
+
+    if (!receivedMessages.empty()) {
+        for (Message msg : receivedMessages)
+        {
+            if (msg.getSentiment() == choice)
+                msg.displayMessage();
+        }
+    }
+}
+
+
+
+
 //contact management
 void User::addContact(string contactId) {
     contactList.addContact(contactId, receivedMessages);
@@ -187,6 +215,9 @@ void User::showContacts() {
 bool User::searchContact(const string& uid) {
     return contactList.searchContact(uid);
 }
+
+
+
 
 
 //Add message to favorites (Fixed)
