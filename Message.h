@@ -6,6 +6,12 @@
 #include <ctime>
 
 using namespace std;
+enum Sentiment
+{
+    positive,  //0
+    negative,  //1
+    neutral    //2
+};
 
 class Message {
 private:
@@ -16,6 +22,7 @@ private:
     string content;
     bool isFavorite;
     string sentTime;
+    Sentiment sentiment=neutral;
 
 public:
 
@@ -30,7 +37,8 @@ public:
     string getReceiverUsername();
     string getContent();
     bool getIsFavorite();
-    string getSentTime(); // return formatted time string
+   string getSentTime(); // return formatted time string
+   Sentiment getSentiment();
 
     // Setters
     void setautoId(int nextId);
@@ -41,9 +49,12 @@ public:
     void setIsFavorite(bool favorite);
     void setTime();
     void setTime(string time);
+    void setSentiment(Sentiment);
 
     // Functions
     void displayMessage();
+    void sentimentAnalysis();
+    string showSentiment();
 };
 
 #endif // MESSAGE_H
