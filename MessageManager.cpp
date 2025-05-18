@@ -16,7 +16,8 @@ bool MessageManager::loadMessagesFromFile() {
 	}
 
 	Message message;
-	string msgID, senderID, receiverID, msgContent, time, isFavorite;
+	string msgID, senderID, receiverID, msgContent, time, isFavorite , sentiment;
+	
 
 	while (getline(messageIN, msgID) && getline(messageIN, senderID)
 		&& getline(messageIN, receiverID) && getline(messageIN, msgContent)) {
@@ -32,6 +33,14 @@ bool MessageManager::loadMessagesFromFile() {
 			favorite = false;
 		}
 		message.setIsFavorite(favorite);
+		getline(messageIN, sentiment);
+
+		if (sentiment == "positive")
+			message.setSentiment(positive);
+		else if (sentiment == "negative")
+			message.setSentiment(negative);
+		else 
+			message.setSentiment(neutral);
 
 		getline(messageIN, time);
 		message.setTime(time);
@@ -59,6 +68,7 @@ bool MessageManager::saveMessagesToFile() {
 			<< msg.getReceiverUsername() << "\n"
 			<< msg.getContent() << "\n"
 			<< msg.getIsFavorite() << "\n"
+			<< msg.showSentiment() <<"\n"
 			<< msg.getSentTime() << "\n";
 	}
 	messageOut.close();
