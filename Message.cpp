@@ -3,16 +3,27 @@
 #include <iostream>
 #include <ctime>
 #include <iomanip>
+#include <unordered_set>
+# include <sstream>
 
 using namespace std;
 
 int Message::autoId = 1;
 
-Message::Message() {}
+Message::Message() { }
 
 Message::Message(string from, string to, string text)
-    : messageId("M" + to_string(autoId++)), senderId(from), receiverUsername(to), content(text), isFavorite(false) {
+{
+   
+    messageId = "M" + to_string(autoId++);
+    senderId = from;
+    receiverUsername = to;
+    content = text;
+    isFavorite = false;
     sentTime = "";
+   
+    sentimentAnalysis();
+
 }
 
 Message::Message(string messID, string from, string to, string text)
@@ -30,6 +41,28 @@ bool Message::getIsFavorite() { return isFavorite; }
 // This formats the sentTime nicely
 string Message::getSentTime() {
     return sentTime;
+}
+
+Sentiment Message::getSentiment()
+{
+    return sentiment;
+}
+
+string Message::showSentiment()
+{
+    switch(sentiment)
+    {
+    case positive:
+        return "positive";
+        break;
+    case negative :
+        return "negative";
+        break;
+    case neutral:
+            return "neutral";
+            break;
+
+    }
 }
 
 // Setters
@@ -58,10 +91,75 @@ void Message::setTime() {
 }*/
 void Message::setTime(string time) { sentTime = time; }
 
+void Message::setSentiment(Sentiment s)
+{
+    sentiment = s;
+   
+}
+
+
+
 // Display method
 void Message::displayMessage() {
+   
     cout << "From: " << senderId << "\n";
     cout << "Message: " << content << "\n";
-    cout << "Favorite: " << (isFavorite ? "Yes" : "No") << "\n";
+    cout << "Favorite: " << (isFavorite ? "💌Yes" : "💔No") << "\n";
     cout << "Sent at: " << getSentTime() << "\n";
+    cout << "sentiment/emotion: " << showSentiment() << "\n\n";
 }
+
+void Message::sentimentAnalysis()
+{
+    int PosCounter = 0;
+    int negCounter = 0;
+
+    unordered_set<string> positiveWords = { "happy", "love", "thank", "amazing", "great", "wonderful", "awesome",
+        "nice", "beautiful", "perfect", "cool", "fun", "excited", "proud", "joy", "lovely",
+        "kind", "fantastic", "enjoy", "smile", "helpful", "excellent", "cute",
+        "inspiring", "talented", "smart", "friendly", "hardworking", "congratulations" , "brilliant" ,"good"};
+
+    unordered_set<string> negativeWords = {
+    "angry", "hate", "bad", "annoyed", "disappointed", "terrible", "sad", "upset",
+    "horrible", "boring", "stupid", "awful", "worst", "pain", "frustrated", "mad",
+    "useless", "ugly", "tired", "rude", "depressed", "liar", "toxic",
+    "selfish", "lazy", "fake", "!!", "!!!"
+    };
+
+
+
+    // to turn each message's content into separated words
+    string word;
+    
+        stringstream ss(content);        // used library sstream    
+        while (ss >> word)             
+    //   >> that operator reads the content like any inputstream (cin) from the string stream  object until there is nothing to read 
+          
+        {
+        
+            if (positiveWords.count(word))
+                PosCounter++;
+            else if (negativeWords.count(word))
+                negCounter++;
+
+        }
+        cout << "Message Sentiment Analysis\n" << "positive words :" << PosCounter
+            << "\nnegative words :" << negCounter << endl;
+
+        if (PosCounter > negCounter)
+        {
+            setSentiment(positive);
+        }
+        else if (PosCounter < negCounter)
+        {
+            setSentiment(negative);
+        }
+        else
+        {
+           setSentiment(neutral);
+        }
+
+    //    cout << showSentiment();
+    
+}
+
