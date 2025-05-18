@@ -23,14 +23,15 @@ void startUserMenu(UserManager& userManager, System& system) {
         cout << "Press 9 to search messages by keyword\n";
         cout << "Press 10 to view stats\n";
         cout << "Press 11 to search for a contact by ID\n";
-        cout << "Press 12 to log out\n\n";
+        cout << "Press 12 to filter recieved messages by sentiment\n";
+        cout << "Press 13 to log out\n\n";
 
 
         int c;
         cout << "Enter your choice: ";
         while (!(cin >> c)) {
             cin.clear(); // Clear error flag
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input. Please enter a number between 1 and 11: ";
         }
 
@@ -148,7 +149,7 @@ void startUserMenu(UserManager& userManager, System& system) {
             string oldPass, newPass;
             cout << "Enter current password: ";
             cin.ignore();
-            oldPass= System::HidePassword();
+            oldPass = System::HidePassword();
 
             if (oldPass != loggedInUser.getpassword()) {
                 cout << "Incorrect password!\n";
@@ -156,7 +157,7 @@ void startUserMenu(UserManager& userManager, System& system) {
             }
 
             cout << "Enter new password: ";
-            newPass= System::HidePassword();
+            newPass = System::HidePassword();
 
             if (newPass.empty()) {
                 cout << "Password cannot be empty!\n";
@@ -227,9 +228,13 @@ void startUserMenu(UserManager& userManager, System& system) {
             }
             break;
         }
+        case 12:
+        {
+            loggedInUser.filter_RecievedMessages_By_sentiment();
+            break;
+        }
 
-
-        case 12: {
+        case 13: {
             cout << "Are you sure you want to logout? (Y/N): ";
             char confirm;
             cin >> confirm;
@@ -276,7 +281,7 @@ int main() {
             cout << "Enter username: ";
             getline(cin, username);
             cout << "Enter password: ";
-            password= System::HidePassword();
+            password = System::HidePassword();
 
             isValid = system.login(username, password);
         } while (!isValid);
@@ -294,20 +299,20 @@ int main() {
             string confirmPassword;
             do {
                 cout << "Enter password: ";
-                password= System::HidePassword();
+                password = System::HidePassword();
 
                 cout << "Confirm password: ";
-                confirmPassword= System::HidePassword();
+                confirmPassword = System::HidePassword();
 
                 if (password != confirmPassword) {
-                    cout << "Passwords do not match! Please try again.\n";
+                    cout << "Passwords do not match! Please try again.😊\n";
                 }
             } while (password != confirmPassword);
 
             isValid = system.registerUser(username, password);
 
             if (!isValid) {
-                cout << "Username already exists. Please try again.\n";
+                cout << "Username already exists. Please try again.😊\n";
             }
 
         } while (!isValid);
@@ -323,7 +328,7 @@ int main() {
 
             isValid = system.login(username, password);
             if (!isValid) {
-                cout << "Invalid credentials. Please try again.\n";
+                cout << "Invalid credentials. Please try again.😊\n";
             }
 
         } while (!isValid);
@@ -338,12 +343,12 @@ int main() {
 
     // Save Data before Exit
     if (!userManager.saveUsersToFile()) {
-        cout << "Failed to save users to file!\n";
+        cout << "Failed to save users to file!😞\n";
         return 1;
     }
 
     if (!messageManager.saveMessagesToFile()) {
-        cout << "Failed to save messages to file!\n";
+        cout << "Failed to save messages to file!.😞\n";
         return 1;
     }
 
